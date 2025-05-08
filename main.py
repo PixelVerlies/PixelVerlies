@@ -89,9 +89,9 @@ while run:
         i.drawField(blockSize, SCREEN)
 
     #for i in field_list:
-    #    i.drawField()
+    #    i.drawField(SCREEN, blockSize)
 
-    #charac.drawField()
+    #charac.drawField(SCREEN, blockSize)
 
     pygame.display.flip()
     clock.tick(60)

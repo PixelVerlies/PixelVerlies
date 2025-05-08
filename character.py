@@ -12,37 +12,37 @@ class character():
         rec = pygame.Rect((grid.gridCordinat(self.x, self.y)), (blockSize, blockSize))
         pygame.draw.rect(SCREEN, (200,200,200), rec)
 
-    def move(self, direction, wall):
+    def move(self, direction, fields):
         movement = 0
         if direction == 1:
-            for i in wall:
-                if (self.x, self.y - 1) == (i.x, i.y):
+            for field in fields:
+                if (self.x, self.y - 1) == (field.x, field.y):
                     movement = 1
-                    if type(i) == map.door:
-                        return i
+                    if type(field) == map.door:
+                        return field
             if movement != 1:
                 self.y -= 1
         elif direction == 2:
-            for i in wall:
-                if (self.x, self.y + 1) == (i.x, i.y):
+            for field in fields:
+                if (self.x, self.y + 1) == (field.x, field.y):
                     movement = 1
-                    if type(i) == map.door:
-                        return i
+                    if type(field) == map.door:
+                        return field
             if movement != 1:
                 self.y += 1
         elif direction == 3:
-            for i in wall:
-                if (self.x - 1, self.y) == (i.x, i.y):
+            for field in fields:
+                if (self.x - 1, self.y) == (field.x, field.y):
                     movement = 1
-                    if type(i) == map.door:
-                        return i
+                    if type(field) == map.door:
+                        return field
             if movement != 1:
                 self.x -= 1
         elif direction == 4:
-            for i in wall:
-                if (self.x + 1, self.y) == (i.x, i.y):
+            for field in fields:
+                if (self.x + 1, self.y) == (field.x, field.y):
                     movement = 1
-                    if type(i) == map.door:
-                        return i
+                    if type(field) == map.door:
+                        return field
             if movement != 1:
                 self.x += 1
