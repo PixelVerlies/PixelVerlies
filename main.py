@@ -1,6 +1,8 @@
 import pygame
 import grid
 import textFunctions
+import character
+import map
 import sys
 
 pygame.init()
@@ -60,6 +62,23 @@ while run:
                         else: 
                             i.text += event.unicode
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                movement = 1
+            if event.key == pygame.K_DOWN:
+                movement = 2
+            if event.key == pygame.K_LEFT:
+                movement = 3
+            if event.key == pygame.K_RIGHT:
+                movement = 4
+
+            #doorAkt = charac.move(movement, field_list)
+
+    #if doorAkt:
+    #    field_list.clear()
+    #    field_list = all_rooms[doorAkt.nextRoom].creatRoomFields(door_list, charac, movement, doorAkt.nextDoor)
+    #    doorAkt = None
+
             
     
     SCREEN.fill(BLACK)
@@ -68,6 +87,11 @@ while run:
 
     for i in texfield_list:
         i.drawField(blockSize, SCREEN)
+
+    #for i in field_list:
+    #    i.drawField()
+
+    #charac.drawField()
 
     pygame.display.flip()
     clock.tick(60)
