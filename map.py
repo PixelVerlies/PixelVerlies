@@ -2,31 +2,29 @@ import pygame
 import grid
 
 class field():
-    def __init__(self, x, y):
+    def __init__(self, x, y, img):
         self.x = x
         self.y = y
+        self.img = img
 
     def drawField(self, SCREEN, blockSize):
         rec = pygame.Rect((grid.gridCordinat(self.x, self.y)), (blockSize, blockSize))
-        pygame.draw.rect(SCREEN, (255,255,255), rec)
+        SCREEN.blit(self.img, rec)
 
-class door():
-    def __init__(self, doorNr, roomId, nextDoor, nextRoom, site):
+class door(field):
+    def __init__(self, doorNr, roomId, nextDoor, nextRoom, site, img):
         self.doorId = doorNr
         self.roomId = roomId
         self.nextDoor = nextDoor
         self.nextRoom = nextRoom
         self.site = site
+        self.img = img
         self.x = 0
         self.y = 0
 
     def doorCordinat(self, x, y):
         self.x = x
         self.y = y
-
-    def drawField(self, SCREEN, blockSize):
-        rec = pygame.Rect((grid.gridCordinat(self.x, self.y)), (blockSize, blockSize))
-        pygame.draw.rect(SCREEN, (150,150,150), rec)
 
 class room():
     def __init__(self, roomId, fields):

@@ -1,9 +1,11 @@
 import pygame
 import grid
 import textFunctions
-import character
-import map
+import login_screen
+import registration_screen
+import menu_screen
 import sys
+
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -17,81 +19,50 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 pygame.font.init()
-ueberschrift = pygame.font.Font("Arcade-Classic-Font/ARCADECLASSIC.TTF", 35)
-textKoerper = pygame.font.Font("Arcade-Classic-Font/ARCADECLASSIC.TTF", 20)
+ueberschrift = pygame.font.Font("Arcade-Classic-Font/bytebounce.medium.TTF", 45)
+textKoerper = pygame.font.Font("Arcade-Classic-Font/bytebounce.medium.TTF", 25)
 
 blockSize = 25
 fild_leng = WIDTH / blockSize
 fild_high = HEIGHT / blockSize
 
+# 1 = Login, 2 = Registration, 3 = Main Menu
 site = 1
 
 run = True
 
-
-texfield_list = []
-
-if site == 1:
-    texfield_list.append(textFunctions.textField("Anmeldung", 16, 3, ueberschrift, 8))
-    texfield_list.append(textFunctions.textField("Name",15, 7, textKoerper, 4))
-    texfield_list.append(textFunctions.textInput(21, 7, textKoerper, 6, 1))
-    texfield_list.append(textFunctions.textField("Passwort",15, 9, textKoerper, 4))
-    texfield_list.append(textFunctions.textInput(21, 9, textKoerper, 6, 1))
+# In der Hauptschleife:
+login_data = login_screen.create_login_fields(ueberschrift, textKoerper)
+registration_data = registration_screen.create_registration_fields(ueberschrift, textKoerper)
+menu_data = menu_screen.create_menu_fields(ueberschrift, textKoerper)
 
 while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: 
             run = False
         
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            posx, posy = pygame.mouse.get_pos()
-
-            for i in texfield_list:
-                if type(i) is textFunctions.textInput:
-                    if i.rec.collidepoint(posx, posy):
-                        i.active = True
-                    else:
-                        i.active = False
-
-        if event.type == pygame.KEYDOWN: 
-            for i in texfield_list:
-                if type(i) is textFunctions.textInput:
-                    if i.active:
-                        if event.key == pygame.K_BACKSPACE: 
-                            i.text = i.text[:-1] 
-                        else: 
-                            i.text += event.unicode
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                movement = 1
-            if event.key == pygame.K_DOWN:
-                movement = 2
-            if event.key == pygame.K_LEFT:
-                movement = 3
-            if event.key == pygame.K_RIGHT:
-                movement = 4
-
-            #doorAkt = charac.move(movement, field_list)
-
-    #if doorAkt:
-    #    field_list.clear()
-    #    field_list = all_rooms[doorAkt.nextRoom].creatRoomFields(door_list, charac, movement, doorAkt.nextDoor)
-    #    doorAkt = None
-
-            
+        if site == 1:  # Login screen
+            site = login_screen.handle_login_events(event, login_data, site)
+        elif site == 2:  # Registration screen
+            site = registration_screen.handle_registration_events(event, registration_data, site)
+        elif site == 3:  # Main menu
+            site = menu_screen.handle_menu_events(event, menu_data, site)
     
     SCREEN.fill(BLACK)
-
     grid.drawGrid(WIDTH, HEIGHT, blockSize, SCREEN) 
 
-    for i in texfield_list:
-        i.drawField(blockSize, SCREEN)
-
-    #for i in field_list:
-    #    i.drawField(SCREEN, blockSize)
-
-    #charac.drawField(SCREEN, blockSize)
+    if site == 1:
+        for field in login_data["fields"]:
+            field.drawField(blockSize, SCREEN)
+    elif site == 2:
+        for field in registration_data["fields"]:
+            field.drawField(blockSize, SCREEN)
+    elif site == 3:
+        for field in menu_data["fields"]:
+            field.drawField(blockSize, SCREEN)
 
     pygame.display.flip()
     clock.tick(60)
+
+pygame.quit()
+sys.exit()
