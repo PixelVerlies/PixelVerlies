@@ -15,3 +15,7 @@ def gridCordinat(x, y, blockSize):
 def countField(i, blockSize):
     count = int(i / blockSize) + (i % blockSize > 0)
     return count
+
+def importImage(path, blockSize):
+    img = pygame.image.load(path)
+    return pygame.transform.scale(img, (blockSize, blockSize))

@@ -2,15 +2,12 @@ import pygame
 import grid
 import map
 
-class character():
-    def __init__(self, x, y):
+class character(map.field):
+    def __init__(self, x, y, img):
         self.x = x
         self.y = y
         self.bew = 5
-
-    def drawField(self, SCREEN, blockSize):
-        rec = pygame.Rect((grid.gridCordinat(self.x, self.y)), (blockSize, blockSize))
-        pygame.draw.rect(SCREEN, (200,200,200), rec)
+        self.img = img
 
     def move(self, direction, fields):
         movement = 0
