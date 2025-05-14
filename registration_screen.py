@@ -81,8 +81,8 @@ def handle_registration_events(event, registration_data, site):
                     elif password_field.real_text != repeat_field.real_text:
                         error_msg.text = "PASSWORTER STIMMEN NICHT UEBEREIN"
                     else:
-                        # Add actual registration logic here
-                        site = 3  # Go to main menu
+                        # registration logic back to loin to enter your data
+                        site = 1  # Go back to Login to Logon
     
     if event.type == pygame.KEYDOWN:
         for field in texfield_list:
