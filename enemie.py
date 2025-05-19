@@ -2,21 +2,25 @@ import pygame
 import grid
 import heapq
 import random
+import database
 
 class enemie():
-    def __init__(self, x, y, ini, roomId, roomX, roomY, img=0):
+    def __init__(self, x, y, ini, roomId, roomX, roomY, enemieId=1, img=0):
         self.x = x
         self.y = y
         self.roomId = roomId
         self.roomX = roomX
         self.roomY = roomY
-        self.maxBew = 3
-        self.aktBew = 3
+
+        db = database.loadEnemie(enemieId)
+
+        self.maxBew = db[0][2]
+        self.aktBew = self.maxBew
         self.img = img
         self.ini = ini
-        self.dmg = 6
-        self.health = 10
-        self.maxHealth = 10
+        self.dmg = db[0][4]
+        self.health = db[0][1]
+        self.maxHealth = self.health
 
     def loadImg(self, img):
         self.img = img
