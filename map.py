@@ -30,10 +30,29 @@ class door(field):
         self.x = x
         self.y = y
 
+    def startDoor(self, character):
+        match character.direction:
+            case 1:
+                character.x = self.x
+                character.y = self.y - 1
+            case 2:
+                character.x = self.x
+                character.y = self.y + 1
+            case 3:
+                character.x = self.x - 1
+                character.y = self.y
+            case 4:
+                character.x = self.x + 1
+                character.y = self.y
+
+
 class room():
-    def __init__(self, roomId, fields):
-        self.roomFields = fields
+    def __init__(self, roomId, map):
+        self.roomMap = map
+        self.roomFields = None
         self.roomId = roomId
+        self.countEnemie = 0
+        self.maxIni = 1
         self.startX = 0
         self.startY = 0
 
@@ -41,46 +60,32 @@ class room():
         self.startX = int(fild_leng / 2 - length / 2)
         self.startY = int(fild_high / 2 - heigh / 2)
 
-    def creatRoomFields(self, allDoors, maxIni, character=None, nextDoor=None):
+    def creatRoomFields(self, allDoors):
         fields = []
-        for i in range(len(self.roomFields)):
-            for j in range(len(self.roomFields[i])):
-                if self.roomFields[i][j] == 1:
+
+        for i in range(len(self.roomMap)):
+            for j in range(len(self.roomMap[i])):
+                if self.roomMap[i][j] == 1:
                     fields.append(field(self.startX + j, self.startY + i))
-                if self.roomFields[i][j] == 2:
+                if self.roomMap[i][j] == 2:
                     for doors in allDoors:
                         if doors.roomId == self.roomId:
                             if i == 0 and doors.site == 1:
                                 fields.append(doors)
                                 doors.doorCordinat(self.startX + j, self.startY + i)
-                            elif i == len(self.roomFields) - 1 and doors.site == 2:
+                            elif i == len(self.roomMap) - 1 and doors.site == 2:
                                 fields.append(doors)
                                 doors.doorCordinat(self.startX + j, self.startY + i)
                             elif j == 0 and doors.site == 3:
                                 fields.append(doors)
                                 doors.doorCordinat(self.startX + j, self.startY + i)
-                            elif j == len(self.roomFields[i]) - 1 and doors.site == 4:
+                            elif j == len(self.roomMap[i]) - 1 and doors.site == 4:
                                 fields.append(doors)
                                 doors.doorCordinat(self.startX + j, self.startY + i)
 
-                        if character:
-                            if doors.doorId == nextDoor:
-                                match character.direction:
-                                    case 1:
-                                        character.x = doors.x
-                                        character.y = doors.y - 1
-                                    case 2:
-                                        character.x = doors.x
-                                        character.y = doors.y + 1
-                                    case 3:
-                                        character.x = doors.x - 1
-                                        character.y = doors.y
-                                    case 4:
-                                        character.x = doors.x + 1
-                                        character.y = doors.y
+                if self.roomMap[i][j] == 4:
+                    self.countEnemie += 1
+                    self.maxIni += 1
+                    fields.append(enemie.enemie(self.startX + j, self.startY + i, self.maxIni, self.roomId, j, i))
 
-                if self.roomFields[i][j] == 4:
-                    maxIni += 1
-                    fields.append(enemie.enemie(self.startX + j, self.startY + i, maxIni))
-
-        return fields, maxIni
+        self.roomFields = fields 

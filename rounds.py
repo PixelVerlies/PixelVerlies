@@ -2,7 +2,7 @@ import pygame
 from enemie import enemie
 
 class rounds():
-    def __init__(self, fields, fild_leng, fild_high):
+    def __init__(self, fields, fild_leng, fild_high, maxIni, countEnemie):
         self.field_list = fields
         self.fild_leng = fild_leng
         self.fild_high = fild_high
@@ -10,7 +10,8 @@ class rounds():
         self.aktWait = 10
         self.maxWait = 10
         self.aktIni = 1
-        self.maxIni = 1
+        self.maxIni = maxIni
+        self.countEnemie = countEnemie
         self.roundNr = 0
         self.prue = 0
         self.prueIni = []
@@ -31,7 +32,7 @@ class rounds():
                         if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                             charac.direction = 4
 
-                        doorAkt = charac.move(self.field_list)
+                        doorAkt = charac.move(self)
 
                         for fiel in self.field_list:
                             if type(fiel) == enemie:
@@ -40,11 +41,10 @@ class rounds():
                             self.aktIni += 1
                     else:
                         charac.aktBew = charac.maxBew
+                        charac.attacked = 1
 
             return doorAkt
-
         else:
-            
             if self.wait == 1:
                 self.aktWait -= 1
                 if self.aktWait == 0:
@@ -65,6 +65,7 @@ class rounds():
 
             if 1 in self.prueIni:
                 charac.aktBew = charac.maxBew
+                charac.attacked = 1
                 self.aktIni = 1
                 self.roundNr += 1
     

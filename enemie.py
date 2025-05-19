@@ -1,15 +1,22 @@
 import pygame
 import grid
 import heapq
+import random
 
 class enemie():
-    def __init__(self, x, y, ini, img=0):
+    def __init__(self, x, y, ini, roomId, roomX, roomY, img=0):
         self.x = x
         self.y = y
-        self.maxBew = 4
-        self.aktBew = 4
+        self.roomId = roomId
+        self.roomX = roomX
+        self.roomY = roomY
+        self.maxBew = 3
+        self.aktBew = 3
         self.img = img
         self.ini = ini
+        self.dmg = 6
+        self.health = 10
+        self.maxHealth = 10
 
     def loadImg(self, img):
         self.img = img
@@ -89,9 +96,31 @@ class enemie():
                     self.y = result[0]
                     rod.wait = 1
                     self.aktBew -= 1
+        else:
+            self.aktBew = 0
 
         if (charac.x == self.x - 1 or charac.x == self.x + 1) and charac.y == self.y or (charac.y == self.y - 1 or charac.y == self.y + 1) and charac.x == self.x:
             self.aktBew = 0
+            self.attack(charac)
 
         if self.aktBew == 0:
             rod.aktIni += 1
+
+    def drawHealthbar(self, SCREEN, blockSize):
+        rec = pygame.Rect((grid.gridCordinat(self.x, self.y - 1, blockSize)), (blockSize, int(blockSize / 3)))
+        rec.y += blockSize / 2
+        pygame.draw.rect(SCREEN, (255,255,255), rec)
+
+        recHealth = pygame.Rect((grid.gridCordinat(self.x, self.y - 1, blockSize)), (blockSize - 2, int(blockSize / 3) - 2))
+        recHealth.x = rec.x + 1
+        recHealth.y = rec.y + 1
+        recHealth.width = recHealth.width / self.maxHealth * self.health
+        pygame.draw.rect(SCREEN, (0,0,0,), recHealth)
+
+    def attack(self, charac):
+        dmg = random.randint(1,self.dmg) - charac.shield
+        if dmg > 0:
+            charac.health -= dmg
+
+        if charac.health <= 0:
+            charac.die()
