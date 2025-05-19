@@ -2,7 +2,7 @@ import pygame
 import grid
 import heapq
 import random
-import database
+import sql
 
 class enemie():
     def __init__(self, x, y, ini, roomId, roomX, roomY, enemieId=1, img=0):
@@ -12,7 +12,7 @@ class enemie():
         self.roomX = roomX
         self.roomY = roomY
 
-        db = database.loadEnemie(enemieId)
+        db = sql.loadEnemie(enemieId)
 
         self.maxBew = db[0][2]
         self.aktBew = self.maxBew
