@@ -8,25 +8,17 @@ def create_credits_fields(ueberschrift, textKoerper):
     # Title "Hauptmenü"
     texfield_list.append(textFunctions.textField("Credits", 14, 3, ueberschrift, 12))
 
-    textwars = """Lastenheft Projektarbeit:
-
-Pixel-Verlies 
-
-Ein Dungeon Crawler Spiel 
-mit Pygame entwickeln 
-und in Pixel Art gehalten.
-
-Schüler:
-Julian Daum,
-Sven Thienel
-
-Klasse:
-WIV2426"""
-
     #Textfeld Starwars
-    texfield_list.append(textFunctions.textField(textwars, 16, 8, textKoerper, 8,5))
+    texfield_list.append(textFunctions.textweiß("Lastenheft Projektarbeit:", 15, 6, textKoerper, 10,1))
+    texfield_list.append(textFunctions.textweiß("Pixel-Verlies ", 15, 7, textKoerper, 10,1))
+    texfield_list.append(textFunctions.textweiß("Ein Dungeon Crawler Spiel", 15, 8, textKoerper, 10,1))
+    texfield_list.append(textFunctions.textweiß("mit Pygame entwickeln ", 15, 9, textKoerper, 10,1))
+    texfield_list.append(textFunctions.textweiß("und in Pixel Art gehalten. ", 15, 10, textKoerper, 10,1))
+    texfield_list.append(textFunctions.textweiß("Schüler:", 15, 11, textKoerper, 10,1))
+    texfield_list.append(textFunctions.textweiß("Julian Daum, Sven Thienel", 15, 12, textKoerper, 10,1))
+    texfield_list.append(textFunctions.textweiß("Klasse: WIV2426", 15, 13, textKoerper, 10,1))
 
-    # Charakter button
+    # zurück button
     texfield_list.append(textFunctions.toggleButton("Zuruck", 16, 18, textKoerper, 8, 1))
 
     
@@ -51,7 +43,7 @@ def handle_credits_events(event, credits_data, site):
                     
             elif isinstance(field, textFunctions.toggleButton) and field.rec.collidepoint(posx, posy):
                 if field.text == "Zuruck":
-                    site = 3
+                    site = 3 #zurück zum hauptmenü
 
 
     
