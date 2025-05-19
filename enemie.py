@@ -101,7 +101,7 @@ class enemie():
 
         if (charac.x == self.x - 1 or charac.x == self.x + 1) and charac.y == self.y or (charac.y == self.y - 1 or charac.y == self.y + 1) and charac.x == self.x:
             self.aktBew = 0
-            self.attack(charac)
+            self.attack(charac, rod)
 
         if self.aktBew == 0:
             rod.aktIni += 1
@@ -117,10 +117,10 @@ class enemie():
         recHealth.width = recHealth.width / self.maxHealth * self.health
         pygame.draw.rect(SCREEN, (0,0,0,), recHealth)
 
-    def attack(self, charac):
+    def attack(self, charac, rod):
         dmg = random.randint(1,self.dmg) - charac.shield
         if dmg > 0:
             charac.health -= dmg
 
         if charac.health <= 0:
-            charac.die()
+            rod.end = 2

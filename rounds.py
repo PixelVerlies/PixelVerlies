@@ -12,6 +12,7 @@ class rounds():
         self.aktIni = 1
         self.maxIni = maxIni
         self.countEnemie = countEnemie
+        self.end = 0
         self.roundNr = 0
         self.prue = 0
         self.prueIni = []
@@ -37,7 +38,8 @@ class rounds():
                         for fiel in self.field_list:
                             if type(fiel) == enemie:
                                 fiel.aktBew = fiel.maxBew
-                    elif self.maxIni > 1:
+
+                        if self.maxIni > 1 and charac.aktBew == 0:
                             self.aktIni += 1
                     else:
                         charac.aktBew = charac.maxBew
