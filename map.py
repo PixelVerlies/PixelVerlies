@@ -74,3 +74,16 @@ class room():
                                 elif j == len(self.roomMap[i]) - 1 and doors.site == 4:
                                     self.roomFields.append(doors)
                                     doors.doorCordinat(self.startX + j, self.startY + i)
+
+
+def drawGamefild(rod, charac, SCREEN, blockSize, textKoerper):
+    for i in rod.field_list:
+        if type(i) == enemie.enemie:
+            i.drawHealthbar(SCREEN, blockSize)
+        i.drawField(SCREEN, blockSize)
+
+
+    rod.field_list[0].drawField(SCREEN, blockSize)
+
+    charac.drawField(SCREEN, blockSize)
+    charac.drawHealthbar(SCREEN, blockSize, textKoerper)

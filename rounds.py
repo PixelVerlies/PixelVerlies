@@ -17,7 +17,7 @@ class rounds():
         self.prue = 0
         self.prueIni = []
 
-    def roundRun(self, events, charac):
+    def roundRun(self, events, charac, door_list, all_rooms):
         doorAkt = None
 
         if self.aktIni == 1:
@@ -44,8 +44,6 @@ class rounds():
                     else:
                         charac.aktBew = charac.maxBew
                         charac.attacked = 1
-
-            return doorAkt
         else:
             if self.wait == 1:
                 self.aktWait -= 1
@@ -73,3 +71,11 @@ class rounds():
     
         self.prue = 0
         self.prueIni = []
+
+        if doorAkt:
+            self.maxIni = 1
+            roomAkt = doorAkt.nextRoom
+            door_list[doorAkt.nextDoor].startDoor(charac)
+            self.field_list = all_rooms[roomAkt].roomFields
+            self.maxIni = all_rooms[roomAkt].maxIni
+            doorAkt = None

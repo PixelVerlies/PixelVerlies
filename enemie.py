@@ -30,13 +30,9 @@ class enemie(field):
             case 1:
                 path = "1746876953758.png"
             case 2:
-                path = "1746711570959.png"
+                path = "1747824784473.png"
             
         self.img = grid.importImage(path, blockSize)
-
-    # def drawField(self, SCREEN, blockSize):
-    #     rec = pygame.Rect((grid.gridCordinat(self.x, self.y, blockSize)), (blockSize, blockSize))
-    #     SCREEN.blit(self.img, rec)
 
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])

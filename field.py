@@ -7,8 +7,8 @@ class field():
         self.y = y
         self.img = None
 
-    def loadImg(self, blockSize, path):
-        self.img = grid.importImage(path, blockSize)
+    def loadImg(self, img):
+        self.img = img
 
     def drawField(self, SCREEN, blockSize):
         rec = pygame.Rect((grid.gridCordinat(self.x, self.y, blockSize)), (blockSize, blockSize))

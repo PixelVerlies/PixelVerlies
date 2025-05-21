@@ -3,6 +3,7 @@ from rounds import rounds
 import map
 from enemie import enemie
 from field import field
+import grid
 
 def creatList():
     all_rooms = []
@@ -11,7 +12,7 @@ def creatList():
                 [1,1,1,1,2,1,1,1],
                 [1,0,0,0,0,0,0,1],
                 [1,0,0,0,0,0,0,1],
-                [1,0,3,0,0,0,0,2],
+                [1,0,0,0,0,0,0,2],
                 [1,0,0,0,0,0,0,1],
                 [1,0,0,0,0,0,0,1],
                 [1,1,1,1,1,1,1,1]]))
@@ -52,21 +53,22 @@ def creatList():
 
 def loadAllImg(charac, all_rooms, door_list, blockSize):
 
-    charac.loadImg(blockSize, "1746711570959.png")
+    characterImg = grid.importImage("1746711570959.png", blockSize)
+    charac.loadImg(characterImg)
 
+    doorImg = grid.importImage("1746713085218.png", blockSize)
     for i in door_list:
-        i.loadImg(blockSize, "1746713085218.png")
+        i.loadImg(doorImg)
 
+    fieldImg = grid.importImage("1746711373129.png", blockSize)
     for i in all_rooms:
         for j in i.roomFields:
             if type(j) == enemie:
                 j.loadImg(blockSize)
             elif type(j) == field:
-                j.loadImg(blockSize, "1746711373129.png")
+                j.loadImg(fieldImg)
 
     return charac, all_rooms, door_list
-    
-
 
 def create(data, blockSize, fild_leng, fild_high):
     all_rooms, door_list = creatList()
