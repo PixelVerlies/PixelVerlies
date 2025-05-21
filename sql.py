@@ -1,17 +1,12 @@
 from database import database
 
-def loadEnemie(enemieID):
-    data = database()
-    data.connection()
-
-    data.cur.execute(f"""SELECT gegner.Name, gegner.LP, gegner.bewegungsrate, gegner.GegnerID, wuerfel.seiten
-                        FROM gegner JOIN wuerfel ON gegner.wuerfelID = wuerfel.wuerfelID
-                        WHERE gegnerID = {enemieID}""")
+def loadEnemie(enemieID, data):
+    data.cur.execute(f"""SELECT Gegner.Name, Gegner.LP, Gegner.GegnerID, Wuerfel.seiten
+                        FROM Gegner JOIN Wuerfel ON Gegner.wuerfelID = Wuerfel.wuerfelID
+                        WHERE GegnerID = {enemieID}""")
     
     lis = []
     for i in data.cur:
         lis.append(i)
-    
-    data.connClose()
-    return lis
-    
+
+    return lis[0]

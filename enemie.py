@@ -3,41 +3,53 @@ import grid
 import heapq
 import random
 import sql
+from field import field
 
-class enemie():
-    def __init__(self, x, y, ini, roomId, roomX, roomY, enemieId=1, img=0):
+class enemie(field):
+    def __init__(self, x, y, ini, roomId, roomX, roomY, enemieId, data):
         self.x = x
         self.y = y
         self.roomId = roomId
         self.roomX = roomX
         self.roomY = roomY
+        self.id = enemieId 
 
-        db = sql.loadEnemie(enemieId)
+        db = sql.loadEnemie(self.id, data)
 
-        self.maxBew = db[0][2]
+        self.maxBew = 3 #
         self.aktBew = self.maxBew
-        self.img = img
+        self.img = None
         self.ini = ini
-        self.dmg = db[0][4]
-        self.health = db[0][1]
+        self.dmg = db[3] #6 #
+        self.health = db[1] #10 #
         self.maxHealth = self.health
 
-    def loadImg(self, img):
-        self.img = img
+    def loadImg(self, blockSize):
+        path = ""
+        match self.id:
+            case 1:
+                path = "1746876953758.png"
+            case 2:
+                path = "1746711570959.png"
+            
+        self.img = grid.importImage(path, blockSize)
 
-    def drawField(self, SCREEN, blockSize):
-        rec = pygame.Rect((grid.gridCordinat(self.x, self.y, blockSize)), (blockSize, blockSize))
-        SCREEN.blit(self.img, rec)
+    # def drawField(self, SCREEN, blockSize):
+    #     rec = pygame.Rect((grid.gridCordinat(self.x, self.y, blockSize)), (blockSize, blockSize))
+    #     SCREEN.blit(self.img, rec)
 
-    def pathFinder(self, fields, length, higth, charac):
+    def heuristic(self, a, b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+    def pathFinder(self, fields, cols, rows, charac):
         start = (self.y, self.x)
         goal = (charac.y, charac.x)
 
         grid = []
 
-        for i in range(higth):
+        for i in range(rows):
             row = []
-            for j in range(length):
+            for j in range(cols):
                 row.append(0)
             grid.append(row)
 
@@ -46,15 +58,9 @@ class enemie():
                 grid[i.y][i.x] = 0
             else:
                 grid[i.y][i.x] = 1
-
-
-        rows, cols = len(grid), len(grid[0])
-        
-        def heuristic(a, b):
-            return abs(a[0] - b[0]) + abs(a[1] - b[1])
         
         open_set = []
-        heapq.heappush(open_set, (0 + heuristic(start, goal), 0, start))
+        heapq.heappush(open_set, (0 + self.heuristic(start, goal), 0, start))
         came_from = {}
         cost_so_far = {start: 0}
         
@@ -85,7 +91,7 @@ class enemie():
                     new_cost = cost_so_far[current] + 1
                     if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
                         cost_so_far[next_node] = new_cost
-                        priority = new_cost + heuristic(next_node, goal)
+                        priority = new_cost + self.heuristic(next_node, goal)
                         heapq.heappush(open_set, (priority, new_cost, next_node))
                         came_from[next_node] = current
         return None

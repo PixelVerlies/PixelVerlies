@@ -9,11 +9,11 @@ class database():
     def connection(self):
         try:
             self.conn = mariadb.connect(
-                user="Geister_Eule",
-                password="Jd787811?",
-                host="localhost",
+                user="team09",
+                password="NHHJS",
+                host="10.80.0.206",
                 port=3306,
-                database="pixelverlies"
+                database="team09"
             )
         except mariadb.Error as e:
             print(f"Error {e}")
@@ -23,6 +23,3 @@ class database():
 
     def connClose(self):
         self.conn.close()
-
-
-
