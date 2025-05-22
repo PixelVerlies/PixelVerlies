@@ -10,3 +10,14 @@ def loadEnemie(enemieID, data):
         lis.append(i)
 
     return lis[0]
+
+def loadHealingPotion(data, charac):
+    data.cur.execute(f"""SELECT Heiltraenke.Beschreibung, Heiltraenke.Heilung, CharakterHeiltraenke.Anzahl, Heiltraenke.HeilID
+                        FROM Heiltraenke JOIN CharakterHeiltraenke ON Heiltraenke.HeilID = CharakterHeiltraenke.HeiltrankID
+                        WHERE CharakterHeiltraenke.CharakterID = {charac.id}""")
+    
+    lis = []
+    for i in data.cur:
+        lis.append(i)
+
+    return lis

@@ -2,10 +2,11 @@ import pygame
 from enemie import enemie
 
 class rounds():
-    def __init__(self, fields, fild_leng, fild_high, maxIni, countEnemie):
+    def __init__(self, fields, fild_leng, fild_high, maxIni, countEnemie, level):
         self.field_list = fields
         self.fild_leng = fild_leng
         self.fild_high = fild_high
+        self.level = level
         self.wait = 0
         self.aktWait = 10
         self.maxWait = 10
@@ -24,16 +25,30 @@ class rounds():
             for event in events:
                 if event.type == pygame.KEYDOWN:
                     if charac.aktBew > 0:
-                        if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        charac.direction = None
+                        charac.aktItem = None
+                        if event.key == pygame.K_1:
+                            if len(charac.items) >= 1:
+                                charac.aktItem = 1
+                        elif event.key == pygame.K_2:
+                            if len(charac.items) >= 2:
+                                charac.aktItem = 2
+                        elif event.key == pygame.K_3:
+                            if len(charac.items) >= 3:
+                                charac.aktItem = 3
+                        elif event.key == pygame.K_UP or event.key == pygame.K_w:
                             charac.direction = 1
-                        if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                             charac.direction = 2
-                        if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                             charac.direction = 3
-                        if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                             charac.direction = 4
-
-                        doorAkt = charac.move(self)
+                        
+                        if charac.aktItem:
+                            charac.useItems()
+                        elif charac.direction:
+                            doorAkt = charac.move(self)                        
 
                         for fiel in self.field_list:
                             if type(fiel) == enemie:
@@ -45,6 +60,7 @@ class rounds():
                         charac.aktBew = charac.maxBew
                         self.roundNr += 1
                         charac.attacked = 1
+                        charac.healed = 1
         else:
             if self.wait == 1:
                 self.aktWait -= 1
@@ -67,6 +83,7 @@ class rounds():
             if 1 in self.prueIni:
                 charac.aktBew = charac.maxBew
                 charac.attacked = 1
+                charac.healed = 1
                 self.aktIni = 1
                 self.roundNr += 1
     

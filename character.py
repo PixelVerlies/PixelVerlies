@@ -5,6 +5,8 @@ import random
 import enemie
 import textFunctions
 from field import field
+import healingpotion
+import sql
 
 class character(field):
     def __init__(self, x, y):
@@ -12,14 +14,37 @@ class character(field):
         self.y = y
         self.maxBew = 5
         self.aktBew = 5
+        self.id = 1
         self.img = None
         self.ini = 1
+        self.level = 1
         self.attacked = 1
-        self.direction = 0
+        self.direction = None
         self.dmg = 6
         self.health = 10
         self.maxHealth = 10
+        self.healed = 1
         self.shield = 1
+        self.items = []
+        self.aktItem = None
+
+    def setItems(self, data):
+        res = sql.loadHealingPotion(data, self)
+        for i in res:
+            self.items.append(healingpotion.healingPotion(i))
+
+    def useItems(self):
+        self.aktItem -= 1
+        if self.items[self.aktItem].count > 0 and self.health < self.maxHealth and self.healed == 1:
+            res = self.health + self.items[self.aktItem].healing
+            if res < self.maxHealth:
+                self.health = res
+            else:
+                self.health = self.maxHealth
+            self.items[self.aktItem].count -= 1 
+            self.aktBew -= 1 
+            self.healed = 0
+        self.aktItem = None  
 
     def move(self, rod):
         movement = 0
@@ -85,7 +110,7 @@ class character(field):
 
     def attack(self, enem, fields, rod):
         self.attacked = 0
-        enem.health -= random.randint(1, self.dmg)
+        enem.health -= (random.randint(1, self.dmg) + self.level)
         if enem.health <= 0:
             rod.countEnemie -= 1
             for i in fields:

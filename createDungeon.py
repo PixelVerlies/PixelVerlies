@@ -68,9 +68,15 @@ def loadAllImg(charac, all_rooms, door_list, blockSize):
             elif type(j) == field:
                 j.loadImg(fieldImg)
 
+    healingImg = grid.importImage("Images/Dungeon/wall.png", blockSize * 2)
+
+    for i in range(len(charac.items)):
+        charac.items[i].loadImg(healingImg)
+
+
     return charac, all_rooms, door_list
 
-def create(data, blockSize, fild_leng, fild_high):
+def create(data, blockSize, fild_leng, fild_high, level):
     all_rooms, door_list = creatList()
     roomAkt = 0
 
@@ -78,14 +84,15 @@ def create(data, blockSize, fild_leng, fild_high):
 
     for i in all_rooms:
         i.startPos(len(i.roomMap[0]), len(i.roomMap), fild_leng, fild_high)
-        i.creatRoomFields(door_list, data)
+        i.creatRoomFields(door_list, data, level)
         countEnemie += i.countEnemie
 
     charac = character(18,11)
+    charac.setItems(data)
 
     charac, all_rooms, door_list = loadAllImg(charac, all_rooms, door_list, blockSize)
 
-    rod = rounds(all_rooms[roomAkt].roomFields, fild_leng, fild_high, all_rooms[roomAkt].maxIni, countEnemie)
+    rod = rounds(all_rooms[roomAkt].roomFields, fild_leng, fild_high, all_rooms[roomAkt].maxIni, countEnemie, level)
 
     rod.field_list = all_rooms[roomAkt].roomFields
     rod.maxIni = all_rooms[roomAkt].maxIni

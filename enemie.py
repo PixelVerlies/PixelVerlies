@@ -6,13 +6,14 @@ import sql
 from field import field
 
 class enemie(field):
-    def __init__(self, x, y, ini, roomId, roomX, roomY, enemieId, data):
+    def __init__(self, x, y, ini, roomId, roomX, roomY, enemieId, data, level):
         self.x = x
         self.y = y
         self.roomId = roomId
         self.roomX = roomX
         self.roomY = roomY
         self.id = enemieId 
+        self.level = level
 
         db = sql.loadEnemie(self.id, data)
 
@@ -20,8 +21,8 @@ class enemie(field):
         self.aktBew = self.maxBew
         self.img = None
         self.ini = ini
-        self.dmg = db[3] #6 #
-        self.health = db[1] #10 #
+        self.dmg = db[3]
+        self.health = db[1] + self.level
         self.maxHealth = self.health
 
     def loadImg(self, blockSize):
@@ -124,7 +125,7 @@ class enemie(field):
         pygame.draw.rect(SCREEN, (0,0,0,), recHealth)
 
     def attack(self, charac, rod):
-        dmg = random.randint(1,self.dmg) - charac.shield
+        dmg = random.randint(1,self.dmg) - charac.shield + self.level
         if dmg > 0:
             charac.health -= dmg
 

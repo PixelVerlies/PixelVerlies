@@ -49,14 +49,14 @@ class room():
         self.startX = int(fild_leng / 2 - length / 2)
         self.startY = int(fild_high / 2 - heigh / 2)
 
-    def creatRoomFields(self, allDoors, data):
+    def creatRoomFields(self, allDoors, data, level):
         for i in range(len(self.roomMap)):
             for j in range(len(self.roomMap[i])):
                 if type(self.roomMap[i][j]) == list:
                     if self.roomMap[i][j][0] == 4:
                         self.countEnemie += 1
                         self.maxIni += 1
-                        self.roomFields.append(enemie.enemie(self.startX + j, self.startY + i, self.maxIni, self.roomId, j, i, self.roomMap[i][j][1], data))
+                        self.roomFields.append(enemie.enemie(self.startX + j, self.startY + i, self.maxIni, self.roomId, j, i, self.roomMap[i][j][1], data, level))
                 else:
                     if self.roomMap[i][j] == 1:
                         self.roomFields.append(field(self.startX + j, self.startY + i))
@@ -84,7 +84,7 @@ def drawGamefild(rod, charac, SCREEN, blockSize, textKoerper):
         i.drawField(SCREEN, blockSize)
 
     bar = itembar.itembar(3)
-    bar.drawItemBar(rod, SCREEN, blockSize, textKoerper)
+    bar.drawItemBar(rod, charac, SCREEN, blockSize, textKoerper)
 
     rod.field_list[0].drawField(SCREEN, blockSize)
 
