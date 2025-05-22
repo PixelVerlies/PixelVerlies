@@ -53,14 +53,14 @@ def creatList():
 
 def loadAllImg(charac, all_rooms, door_list, blockSize):
 
-    characterImg = grid.importImage("1746711570959.png", blockSize)
+    characterImg = grid.importImage("Images/Character/warrior.png", blockSize)
     charac.loadImg(characterImg)
 
-    doorImg = grid.importImage("1746713085218.png", blockSize)
+    doorImg = grid.importImage("Images/Dungeon/door.png", blockSize)
     for i in door_list:
         i.loadImg(doorImg)
 
-    fieldImg = grid.importImage("1746711373129.png", blockSize)
+    fieldImg = grid.importImage("Images/Dungeon/wall.png", blockSize)
     for i in all_rooms:
         for j in i.roomFields:
             if type(j) == enemie:

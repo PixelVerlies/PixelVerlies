@@ -2,6 +2,7 @@ import pygame
 import grid
 import enemie
 from field import field
+import itembar
 
 class door(field):
     def __init__(self, doorNr, roomId, nextDoor, nextRoom, site):
@@ -82,6 +83,8 @@ def drawGamefild(rod, charac, SCREEN, blockSize, textKoerper):
             i.drawHealthbar(SCREEN, blockSize)
         i.drawField(SCREEN, blockSize)
 
+    bar = itembar.itembar(3)
+    bar.drawItemBar(rod, SCREEN, blockSize, textKoerper)
 
     rod.field_list[0].drawField(SCREEN, blockSize)
 

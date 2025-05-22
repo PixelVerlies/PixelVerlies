@@ -28,9 +28,9 @@ class enemie(field):
         path = ""
         match self.id:
             case 1:
-                path = "1746876953758.png"
+                path = "Images/Enemies/kobold.png"
             case 2:
-                path = "1747824784473.png"
+                path = "Images/Enemies/unicorn.png"
             
         self.img = grid.importImage(path, blockSize)
 

@@ -43,6 +43,7 @@ class rounds():
                             self.aktIni += 1
                     else:
                         charac.aktBew = charac.maxBew
+                        self.roundNr += 1
                         charac.attacked = 1
         else:
             if self.wait == 1:
