@@ -14,6 +14,7 @@ class textField():
         else:
             self.color = (0, 0, 0)  # Standardfarbe Schwarz
 
+
     def drawField(self, blockSize, SCREEN):
         text = self.font.render(self.text, False, self.color)  # Verwende die Farbe
         
@@ -38,6 +39,42 @@ class textField():
             text_surface.fill((255,255,255))
         text_surface.blit(text, ((count_x - text_x) / 2, (count_y - text_y) / 2))
         SCREEN.blit(text_surface, (grid.gridCordinat(self.x, self.y, blockSize)))
+        
+class textweiß():
+    def __init__(self, text, x, y, font, leng=0, high=0):
+        self.text = text.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A")
+        self.x = x
+        self.y = y
+        self.font = font
+        self.leng = leng
+        self.high = high
+        self.color = (255, 255, 255)  # farbe weiß
+
+    def drawField(self, blockSize, SCREEN):
+        text = self.font.render(self.text, False, self.color)  # Verwende die Farbe
+        
+        text_x, text_y = text.get_size()
+
+        if self.leng == 0:
+            count_x = grid.countField(text_x, blockSize)
+        else:
+            count_x = self.leng
+
+        if self.high == 0:
+            count_y = grid.countField(text_y, blockSize)
+        else:
+            count_y = self.high
+        
+        count_x *= blockSize
+        count_y *= blockSize
+        text_surface = pygame.Surface((count_x, count_y))
+        text_surface.fill((0,0,0))#schwarz hintergrund
+        text_surface.blit(text, ((count_x - text_x) / 2, (count_y - text_y) / 2))
+        SCREEN.blit(text_surface, (grid.gridCordinat(self.x, self.y, blockSize)))
+
+
+        
+
 
 class textInput():
     def __init__(self, x, y, font, leng, high):
