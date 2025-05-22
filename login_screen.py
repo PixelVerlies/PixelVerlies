@@ -1,6 +1,8 @@
 import pygame
 import textFunctions
 import grid
+import sql
+import hashlib
 
 def create_login_fields(ueberschrift, textKoerper):
     texfield_list = []
@@ -45,6 +47,7 @@ def handle_login_events(event, login_data, site):
     name_input = login_data["name_input"]
     password_field = login_data["password_field"]
     error_msg = login_data["error_msg"]
+    
 
     if event.type == pygame.MOUSEBUTTONDOWN:
         posx, posy = pygame.mouse.get_pos()
@@ -73,9 +76,15 @@ def handle_login_events(event, login_data, site):
                         error_msg.text = "Bitte Name EINGEBEN"
                     elif not password_field.real_text.strip():
                         error_msg.text = "Bitte Passwort EINGEBEN"
+                    elif sql.LoginDB(name_input.text.strip(), hashlib.sha256(password_field.real_text.strip().encode()).hexdigest()):
+                        site = 3  # Login erfolgreich
+                        error_msg.text = "---"  # Clear error
+                        name_input.text = ""
+                        password_field.real_text = ""
+                        fehlerzahl = 0
                     else:
-                        # Add actual login logic here
-                        site = 3  # Go to main menu
+                        fehlerzahl = 1
+                        error_msg.text = f"{fehlerzahl} Falscher Benutzername oder Passwort"
     
     if event.type == pygame.KEYDOWN:
         for field in texfield_list:
@@ -84,8 +93,10 @@ def handle_login_events(event, login_data, site):
                     field.text = field.text[:-1]
                     if field.is_password:
                         field.real_text = field.real_text[:-1]
+                elif event.key == pygame.K_TAB:
+                    field.text = field.text + ""#beim tab nichts machen #nice to have ins nächste feld springen.
                 else:
-                    char = event.unicode.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A")
+                    char = event.unicode.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A").replace(" ", "")
                     if field.is_password:
                         field.real_text += char
                         field.text += "*" if not field.show_password else char

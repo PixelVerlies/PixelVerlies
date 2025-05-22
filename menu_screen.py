@@ -59,13 +59,12 @@ def draw_character_table(menu_data, blockSize, SCREEN):
                 (width * blockSize, 2 * blockSize)
             )
             
-            # Nur Datenzeilen (ab Zeile 1) als klickbar markieren
-            if row >= 1:
-                # Ein großes Rechteck für die ganze Zeile erstellen
+            # Klickbare Rechtecke für alle Datenzeilen erstellen (ab row 1)
+            if row >= 1 and col == 0:  # Nur einmal pro Zeile in erster Spalte
                 full_row_rect = pygame.Rect(
                     grid.gridCordinat(table_start_x, y, blockSize),
                     (sum(col_widths) * blockSize, 2 * blockSize)
-                    )
+                )
                 menu_data["table_rects"].append(full_row_rect)
             
             # Farben wie zuvor
@@ -94,6 +93,7 @@ def draw_character_table(menu_data, blockSize, SCREEN):
                 pos[1] + (2 * blockSize - text_y) // 2
             )
             SCREEN.blit(text, text_pos)
+
 
 def handle_menu_events(event, menu_data, site):
     texfield_list = menu_data["fields"]
@@ -127,6 +127,5 @@ def handle_menu_events(event, menu_data, site):
                         menu_data["selected_character"] = menu_data["character_data"][i+1]
                         site = 7
                         return site
-
-
+    
     return site
