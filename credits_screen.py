@@ -8,7 +8,7 @@ def create_credits_fields(ueberschrift, textKoerper):
     # Title "Hauptmenü"
     texfield_list.append(textFunctions.textField("Credits", 14, 3, ueberschrift, 12))
 
-    #Textfeld Starwars
+    #Textfeld komplett
     texfield_list.append(textFunctions.textweiß("Lastenheft Projektarbeit:", 15, 6, textKoerper, 10,1))
     texfield_list.append(textFunctions.textweiß("Pixel-Verlies ", 15, 7, textKoerper, 10,1))
     texfield_list.append(textFunctions.textweiß("Ein Dungeon Crawler Spiel", 15, 8, textKoerper, 10,1))
