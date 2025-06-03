@@ -4,52 +4,9 @@ import map
 from enemie import enemie
 from field import field
 import grid
+import dungeons
 
-def creatList():
-    all_rooms = []
 
-    all_rooms.append(map.room(0, [
-                [1,1,1,1,2,1,1,1],
-                [1,0,0,0,0,0,0,1],
-                [1,0,0,0,0,0,0,1],
-                [1,0,0,0,0,0,0,2],
-                [1,0,0,0,0,0,0,1],
-                [1,0,0,0,0,0,0,1],
-                [1,1,1,1,1,1,1,1]]))
-
-    all_rooms.append(map.room(1, [
-                [1,1,1,1,1,1],
-                [1,0,0,0,0,1],
-                [1,0,0,0,0,1],
-                [1,0,[4,1],0,0,1],
-                [1,0,0,0,0,1],
-                [1,0,0,0,0,1],
-                [1,1,2,1,1,1]]))
-
-    all_rooms.append(map.room(2, [
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1],
-                [2,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1],
-                [1,0,0,0,0,1,1,1,0,1,0,0,0,0,0,1],
-                [1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1],
-                [1,0,0,0,1,1,0,1,0,1,0,0,0,0,0,1],
-                [1,0,0,0,1,0,0,1,0,1,0,0,0,0,0,1],
-                [1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1],
-                [1,0,0,[4,2],0,0,0,0,0,1,0,0,0,0,0,1],
-                [1,0,0,0,0,0,0,0,0,1,0,[4,1],0,0,0,1],
-                [1,1,1,1,1,0,0,1,1,1,1,0,0,0,0,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]))
-
-    door_list = []
-
-    door_list.append(map.door(0,0,1,1,1))
-    door_list.append(map.door(1,1,0,0,2))
-    door_list.append(map.door(2,0,3,2,4))
-    door_list.append(map.door(3,2,2,0,3))
-
-    return all_rooms, door_list
 
 def loadAllImg(charac, all_rooms, door_list, blockSize):
 
@@ -77,18 +34,18 @@ def loadAllImg(charac, all_rooms, door_list, blockSize):
     return charac, all_rooms, door_list
 
 def create(data, blockSize, fild_leng, fild_high, level):
-    all_rooms, door_list = creatList()
+    all_rooms, door_list = dungeons.dungeonOne()
     roomAkt = 0
 
     countEnemie = 0
 
+    charac = character()
+    charac.setItems(data)
+
     for i in all_rooms:
         i.startPos(len(i.roomMap[0]), len(i.roomMap), fild_leng, fild_high)
-        i.creatRoomFields(door_list, data, level)
+        i.creatRoomFields(door_list, data, level, charac)
         countEnemie += i.countEnemie
-
-    charac = character(18,11)
-    charac.setItems(data)
 
     charac, all_rooms, door_list = loadAllImg(charac, all_rooms, door_list, blockSize)
 

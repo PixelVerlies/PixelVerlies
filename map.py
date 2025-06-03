@@ -49,10 +49,15 @@ class room():
         self.startX = int(fild_leng / 2 - length / 2)
         self.startY = int(fild_high / 2 - heigh / 2)
 
-    def creatRoomFields(self, allDoors, data, level):
+    def creatRoomFields(self, allDoors, data, level, charac):
         for i in range(len(self.roomMap)):
             for j in range(len(self.roomMap[i])):
                 if type(self.roomMap[i][j]) == list:
+                    if self.roomMap[i][j][0] == 2:
+                        for doors in allDoors:
+                            if doors.doorId == self.roomMap[i][j][1]:
+                                self.roomFields.append(doors)
+                                doors.doorCordinat(self.startX + j, self.startY + i)
                     if self.roomMap[i][j][0] == 4:
                         self.countEnemie += 1
                         self.maxIni += 1
@@ -60,21 +65,8 @@ class room():
                 else:
                     if self.roomMap[i][j] == 1:
                         self.roomFields.append(field(self.startX + j, self.startY + i))
-                    if self.roomMap[i][j] == 2:
-                        for doors in allDoors:
-                            if doors.roomId == self.roomId:
-                                if i == 0 and doors.site == 1:
-                                    self.roomFields.append(doors)
-                                    doors.doorCordinat(self.startX + j, self.startY + i)
-                                elif i == len(self.roomMap) - 1 and doors.site == 2:
-                                    self.roomFields.append(doors)
-                                    doors.doorCordinat(self.startX + j, self.startY + i)
-                                elif j == 0 and doors.site == 3:
-                                    self.roomFields.append(doors)
-                                    doors.doorCordinat(self.startX + j, self.startY + i)
-                                elif j == len(self.roomMap[i]) - 1 and doors.site == 4:
-                                    self.roomFields.append(doors)
-                                    doors.doorCordinat(self.startX + j, self.startY + i)
+                    if self.roomMap[i][j] == 3:
+                        charac.setCordinats(self.startX + j, self.startY + i)
 
 
 def drawGamefild(rod, charac, SCREEN, blockSize, textKoerper):

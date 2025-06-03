@@ -9,9 +9,9 @@ import healingpotion
 import sql
 
 class character(field):
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self):
+        self.x = 0
+        self.y = 0
         self.maxBew = 5
         self.aktBew = 5
         self.id = 1
@@ -20,11 +20,11 @@ class character(field):
         self.level = 1
         self.attacked = 1
         self.direction = None
-        self.dmg = 6
+        self.dmg = 20
         self.health = 10
         self.maxHealth = 10
         self.healed = 1
-        self.shield = 1
+        self.shield = 10
         self.items = []
         self.aktItem = None
 
@@ -32,6 +32,11 @@ class character(field):
         res = sql.loadHealingPotion(data, self)
         for i in res:
             self.items.append(healingpotion.healingPotion(i))
+        #self.items.append(healingpotion.healingPotion(1))
+
+    def setCordinats(self, x, y):
+        self.x = x
+        self.y = y
 
     def useItems(self):
         self.aktItem -= 1

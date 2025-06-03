@@ -17,6 +17,7 @@ class rounds():
         self.roundNr = 0
         self.prue = 0
         self.prueIni = []
+        self.loot = True
 
     def roundRun(self, events, charac, door_list, all_rooms):
         doorAkt = None

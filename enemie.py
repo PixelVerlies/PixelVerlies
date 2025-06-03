@@ -17,7 +17,7 @@ class enemie(field):
 
         db = sql.loadEnemie(self.id, data)
 
-        self.maxBew = 3 #
+        self.maxBew = 3
         self.aktBew = self.maxBew
         self.img = None
         self.ini = ini
@@ -29,8 +29,10 @@ class enemie(field):
         path = ""
         match self.id:
             case 1:
-                path = "Images/Enemies/kobold.png"
+                path = "Images/Enemies/Goblin.png"
             case 2:
+                path = "Images/Enemies/kobold.png"
+            case 3:
                 path = "Images/Enemies/unicorn.png"
             
         self.img = grid.importImage(path, blockSize)
