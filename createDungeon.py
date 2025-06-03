@@ -33,13 +33,13 @@ def loadAllImg(charac, all_rooms, door_list, blockSize):
 
     return charac, all_rooms, door_list
 
-def create(data, blockSize, fild_leng, fild_high, level):
+def create(data, blockSize, fild_leng, fild_high, level, id):
     all_rooms, door_list = dungeons.dungeonOne()
     roomAkt = 0
 
     countEnemie = 0
 
-    charac = character()
+    charac = character(data, id)
     charac.setItems(data)
 
     for i in all_rooms:

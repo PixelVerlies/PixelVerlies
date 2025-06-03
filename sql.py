@@ -117,3 +117,36 @@ def saveRating(data, rod, charac):
                         VALUES ('{rod.level}', '{rod.roundNr}', '{charac.id}')""")
         
     data.conn.commit()
+
+
+def loadCharacter(data, id):
+    data.cur.execute(f"""SELECT Klassen.Bewegungsrate, Charakter.StufenID, Charakter.LP
+                        FROM Charakter JOIN Klassen ON Charakter.KlassenID = Klassen.KlassenID
+                        WHERE Charakter.CharakterID = {id}""")
+    
+    lis = []
+    for i in data.cur:
+        lis.append(i)
+    
+    data.cur.execute(f"""SELECT CharakterWaffen.WaffenID, Wuerfel.Seiten
+                        FROM (CharakterWaffen JOIN Waffen ON CharakterWaffen.WaffenID = Waffen.WaffenID) JOIN Wuerfel ON Waffen.WuerfelID = Wuerfel.WuerfelID
+                        WHERE CharakterWaffen.CharakterID = {id}
+                        AND CharakterWaffen.Ausgeruestet = 1""")
+    
+    for i in data.cur:
+        lis.append(i)
+
+    data.cur.execute(f"""SELECT CharakterRuestungen.RuestungsID, Ruestungen.Schutz
+                        FROM CharakterRuestungen JOIN Ruestungen ON CharakterRuestungen.RuestungsID = Ruestungen.RuestungsID
+                        WHERE CharakterRuestungen.CharakterID = {id}
+                        AND CharakterRuestungen.Ausgeruestet = 1""")
+
+    check = 0
+    for i in data.cur:
+        check += 1
+        lis.append(i)
+
+    if check == 0:
+        lis.append((0, 0))
+
+    return(lis)

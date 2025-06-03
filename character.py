@@ -9,22 +9,25 @@ import healingpotion
 import sql
 
 class character(field):
-    def __init__(self):
+    def __init__(self, data, id):
         self.x = 0
         self.y = 0
-        self.maxBew = 5
-        self.aktBew = 5
-        self.id = 1
+        self.id = id
+
+        db = sql.loadCharacter(data, self.id)
+
+        self.maxBew = db[0][0]
+        self.aktBew = self.maxBew
         self.img = None
         self.ini = 1
-        self.level = 1
+        self.level = db[0][1]
         self.attacked = 1
         self.direction = None
-        self.dmg = 20
-        self.health = 10
-        self.maxHealth = 10
+        self.dmg = db[1][1]
+        self.maxHealth = db[0][2]
+        self.health = self.maxHealth
         self.healed = 1
-        self.shield = 10
+        self.shield = db[2][1]
         self.items = []
         self.aktItem = None
 
