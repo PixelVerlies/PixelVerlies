@@ -1,11 +1,13 @@
 import pygame
 
-def drawGrid(WIDTH, HEIGHT, blockSize, SCREEN):
+def drawGrid(WIDTH, HEIGHT, blockSize, SCREEN, wall):
     for i in range(0, WIDTH, blockSize):
         for j in range(0, HEIGHT, blockSize):
             rec = pygame.Rect(i, j, blockSize, blockSize)
+            #pygame.draw.rect(SCREEN, (255,255,255), rec, 1)
             if i == 0 or i == WIDTH - blockSize or j == 0 or j == HEIGHT - blockSize:
-                pygame.draw.rect(SCREEN, (255,255,255), rec)
+                SCREEN.blit(wall, rec)
+                #pygame.draw.rect(SCREEN, (255,255,255), rec)
 
 def gridCordinat(x, y, blockSize):
     fild_x = x * blockSize
