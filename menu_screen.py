@@ -228,7 +228,10 @@ def handle_menu_events(event, menu_data, site, current_player_id):
                 elif field.text == "Anleitung": # Geändert von Dungeon
                     site = 5
                 elif field.text == "Start":
+                    char_id = 1
+                    level_id = 1
                     site = 6
+                    return site, char_id, level_id
                 elif field.text == "Abmelden":
                     site = 1  
                 elif field.text == "Beenden":

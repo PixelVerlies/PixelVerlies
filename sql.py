@@ -108,7 +108,7 @@ def create_character(name, klassen_id, spieler_id):
             INSERT INTO CharakterWaffen (CharakterID, WaffenID, Ausgeruestet)
             VALUES ({character_id}, 7, 1)
         """)
-
+        #heiltränke am anfang auswahl.
         db.cur.execute("SELECT HeilID FROM Heiltraenke")
         heal_potion_ids = db.cur.fetchall()
         for heal_id in heal_potion_ids:
