@@ -1,8 +1,10 @@
 import map
 
 def dungeonOne():
+    #Liste der Räume wird erzeugt
     all_rooms = []
 
+    #Erster Raum wird erzeugt
     all_rooms.append(map.room(0, [
                 [1,[2,0],1,[2,2],1,[2,4],1],
                 [1,0,1,0,1,0,1],
@@ -10,6 +12,7 @@ def dungeonOne():
                 [1,0,0,3,0,0,1],
                 [1,1,1,1,1,1,1]]))
     
+    #Zweiter Raum wird erzeugt
     all_rooms.append(map.room(1, [
                 [1,1,1,[2,8],1,1,1],
                 [1,0,0,0,0,0,1],
@@ -17,17 +20,20 @@ def dungeonOne():
                 [1,0,0,0,0,0,1],
                 [1,1,1,1,[2,1],1,1]]))
     
+    #Dritter Raum wird erzeugt
     all_rooms.append(map.room(2, [
                 [1,1,1],
                 [[2,7],0,1],
                 [1,0,[2,10]],
                 [1,[2,3],1]]))
     
+    #Vierter Raum wird erzeugt
     all_rooms.append(map.room(3, [
                 [1,1,1,[2,12],1],
                 [[2,11],0,0,0,1],
                 [1,1,[2,5],1,1]]))
     
+    #Fünfter Raum wird erzeugt
     all_rooms.append(map.room(4, [
                 [1,1,[2,16],1,1],
                 [1,0,0,0,1],
@@ -36,6 +42,7 @@ def dungeonOne():
                 [1,0,0,0,[2,14]],
                 [1,[2,9],1,1,1]]))
     
+    #Sechster Raum wird erzeugt
     all_rooms.append(map.room(5, [
                 [0,0,0,0,1,[2,18],1],
                 [0,0,1,1,1,0,1],
@@ -45,6 +52,7 @@ def dungeonOne():
                 [0,0,1,1,1,0,1],
                 [0,0,0,0,1,[2,13],1]]))
     
+    #Siebter Raum wird erzeugt
     all_rooms.append(map.room(6, [
                 [1,1,1,1,1,0,0],
                 [1,0,0,0,1,1,1],
@@ -52,6 +60,7 @@ def dungeonOne():
                 [1,0,0,0,1,1,1],
                 [1,1,[2,17],1,1,0,0]]))
     
+    #Achter Raum wird erzeugt
     all_rooms.append(map.room(7, [
                 [1,1,1,1,1,1,1,1,1],
                 [1,0,0,0,0,0,0,0,1],
@@ -61,8 +70,10 @@ def dungeonOne():
                 [1,[4,3],0,0,0,0,0,0,1],
                 [1,1,1,[2,19],1,1,1,1,1],]))
 
+    #Liste der Türen wird erzeugt
     door_list = []
 
+    #Türen werden erstellt und gespeichert
     door_list.append(map.door(0,0,1,1,1))
     door_list.append(map.door(1,1,0,0,2))
 

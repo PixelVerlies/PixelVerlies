@@ -7,6 +7,7 @@ from field import field
 
 class enemie(field):
     def __init__(self, x, y, ini, roomId, roomX, roomY, enemieId, data, level):
+        #Erzeugt die nötigen Variabeln
         self.x = x
         self.y = y
         self.roomId = roomId
@@ -14,69 +15,87 @@ class enemie(field):
         self.roomY = roomY
         self.id = enemieId 
         self.level = level
-
-        db = sql.loadEnemie(self.id, data)
-
-        self.maxBew = 3
-        self.aktBew = self.maxBew
         self.img = None
         self.ini = ini
+
+        #Läd die Daten von dem Gegner
+        db = sql.loadEnemie(self.id, data)
+
+        #Speichert die geladenen Daten
+        self.maxBew = 3
+        self.aktBew = self.maxBew
         self.dmg = db[3]
         self.health = db[1] + self.level
         self.maxHealth = self.health
 
     def loadImg(self, blockSize):
+        #Passender Pfad für das Bild wird gesetzt
         path = ""
         match self.id:
             case 1:
-                path = "Images/Enemies/Goblin.png"
+                path = "Images/Enemies/goblin.png"
             case 2:
                 path = "Images/Enemies/kobold.png"
             case 3:
                 path = "Images/Enemies/unicorn.png"
             
+        #Bild für den Heiltrank wird geladen
         self.img = grid.importImage(path, blockSize)
 
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
     def pathFinder(self, fields, cols, rows, charac):
+        #Legt die Kordinaten des Startes fest
         start = (self.y, self.x)
+
+        #Legt die Kordinaten des Zieles fest
         goal = (charac.y, charac.x)
 
         grid = []
 
+        #Erzeugt eine Tabelle
         for i in range(rows):
             row = []
             for j in range(cols):
                 row.append(0)
             grid.append(row)
 
+        #Schreibt alle Hinternisse in die Tabelle
         for i in fields:
             if i.x == self.x and i.y == self.y:
                 grid[i.y][i.x] = 0
             else:
                 grid[i.y][i.x] = 1
         
+
         open_set = []
         heapq.heappush(open_set, (0 + self.heuristic(start, goal), 0, start))
         came_from = {}
         cost_so_far = {start: 0}
         
+        #Legt alle möglichen Richtungen fest
         directions = [(-1,0),(1,0),(0,-1),(0,1)]
         
         while open_set:
             test, current_cost, current = heapq.heappop(open_set)
             
+            #Gibt es einen Weg zum Ziel
             if current == goal:
                 path = []
+                
+                #Erstellt eine Liste der nötigen Schritte
                 while current in came_from:
                     path.append(current)
                     current = came_from[current]
-                path.append(start)
+
+                #Kehrt den Pfad um
                 path.reverse()
-                path = path[1:]
+
+                #Entfernt das Ziel aus dem Pfad
                 path = path[:-1]
+
+                #Gibt den Pfad zurück wenn das Ziel nicht erreicht ist
                 if path != []:
                     path = path[0]
                     return path
@@ -96,8 +115,10 @@ class enemie(field):
         return None
 
     def move(self, rod, charac):
+        #Sucht den optimalen Pfad
         result = self.pathFinder(rod.field_list, rod.fild_leng, rod.fild_high, charac)
 
+        #Bewegt sich nach dem optimalen Pfad
         if result:
             if self.aktBew > 0:
                 if rod.wait == 0:
@@ -108,18 +129,22 @@ class enemie(field):
         else:
             self.aktBew = 0
 
+        #Greift an wen er am Charakter steht
         if (charac.x == self.x - 1 or charac.x == self.x + 1) and charac.y == self.y or (charac.y == self.y - 1 or charac.y == self.y + 1) and charac.x == self.x:
             self.aktBew = 0
             self.attack(charac, rod)
 
+        #Zählt die Initiative hoch
         if self.aktBew == 0:
             rod.aktIni += 1
 
     def drawHealthbar(self, SCREEN, blockSize):
+        #Erzeugt den Hintergund der Lebensanzeige
         rec = pygame.Rect((grid.gridCordinat(self.x, self.y - 1, blockSize)), (blockSize, int(blockSize / 3)))
         rec.y += blockSize / 2
         pygame.draw.rect(SCREEN, (255,255,255), rec)
 
+        #Ereugt das Leben in der Lebensanzeige
         recHealth = pygame.Rect((grid.gridCordinat(self.x, self.y - 1, blockSize)), (blockSize - 2, int(blockSize / 3) - 2))
         recHealth.x = rec.x + 1
         recHealth.y = rec.y + 1
@@ -127,9 +152,13 @@ class enemie(field):
         pygame.draw.rect(SCREEN, (0,0,0,), recHealth)
 
     def attack(self, charac, rod):
+        #Generiert Schaden am Charakter
         dmg = random.randint(1,self.dmg) - charac.shield + self.level
+
+        #Sorgt für keine fehler beim Abzuge des Schutzes
         if dmg > 0:
             charac.health -= dmg
 
+        #Wenn alle Charakter tod für die Niederlage
         if charac.health <= 0:
             rod.end = 2

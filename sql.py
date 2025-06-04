@@ -23,20 +23,20 @@ def loadHealingPotion(data, charac):
     return lis
 
 def loadWinItems(data, level):
-    data.cur.execute(f"""SELECT BeuteWaffen.WaffenID
+    data.cur.execute(f"""SELECT BeuteWaffen.WaffenID, BeuteWaffen.BeuteID
                         FROM Beute JOIN BeuteWaffen ON Beute.BeuteID = BeuteWaffen.BeuteID
                         WHERE Beute.StufenID = {level}""")
     
     lis = []
     for i in data.cur:
-        lis.append((i,1))
+        lis.append((i[0],1))
 
-    data.cur.execute(f"""SELECT BeuteRuestungen.RuestungsID
+    data.cur.execute(f"""SELECT BeuteRuestungen.RuestungsID, BeuteRuestungen.BeuteID
                         FROM Beute JOIN BeuteRuestungen ON Beute.BeuteID = BeuteRuestungen.BeuteID
                         WHERE Beute.StufenID = {level}""")
     
     for i in data.cur:
-        lis.append((i,2))
+        lis.append((i[0],2))
 
     return lis
 
@@ -47,16 +47,15 @@ def loadItems(data, charac):
     
     lis = []
     for i in data.cur:
-        #print(i)
-        it = (i,1)
+        it = (i[0],1)
         lis.append(it)
 
-    data.cur.execute(f"""SELECT CharakterRuestungen.RuestungsID
+    data.cur.execute(f"""SELECT CharakterRuestungen.RuestungsID, CharakterRuestungen.CharakterID
                         FROM CharakterRuestungen
                         WHERE CharakterRuestungen.CharakterID = {charac.id}""")
     
     for i in data.cur:
-        it = (i,1)
+        it = (i[0],2)
         lis.append(it)
 
     #print(lis)
@@ -67,10 +66,10 @@ def loadItems(data, charac):
 def saveWin(data, charac, winItem):
     if winItem[1] == 1:
         data.cur.execute(f"""INSERT INTO CharakterWaffen (CharakterID, WaffenID, Ausgeruestet)
-                         VALUES ('{charac.id}', '{winItem[0][0]}', '0')""")
+                         VALUES ('{charac.id}', '{winItem[0]}', '0')""")
     elif winItem[1] == 2:
         data.cur.execute(f"""INSERT INTO CharakterRuestungen (CharakterID, RuestungsID, Ausgeruestet)
-                         VALUES ('{charac.id}', '{winItem[0][0]}', '0')""")
+                         VALUES ('{charac.id}', '{winItem[0]}', '0')""")
         
     data.conn.commit()
 
@@ -120,7 +119,7 @@ def saveRating(data, rod, charac):
 
 
 def loadCharacter(data, id):
-    data.cur.execute(f"""SELECT Klassen.Bewegungsrate, Charakter.StufenID, Charakter.LP
+    data.cur.execute(f"""SELECT Klassen.Bewegungsrate, Charakter.StufenID, Charakter.LP, Charakter.KlassenID
                         FROM Charakter JOIN Klassen ON Charakter.KlassenID = Klassen.KlassenID
                         WHERE Charakter.CharakterID = {id}""")
     
@@ -150,3 +149,14 @@ def loadCharacter(data, id):
         lis.append((0, 0))
 
     return(lis)
+
+def loadClass(data, id):
+    data.cur.execute(f"""SELECT Charakter.KlassenID
+                        FROM Charakter
+                        WHERE Charakter.CharakterID = {id}""")
+    
+    lis = []
+    for i in data.cur:
+        lis.append(i)
+
+    return(lis[0])
