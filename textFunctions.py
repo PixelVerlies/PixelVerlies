@@ -119,7 +119,10 @@ class textInput():
             self.offset = 0
         
         text_surface = pygame.Surface((field_width, field_height))
-        text_surface.fill((255,255,255))
+        if self.active:
+            text_surface.fill((190,190,190))
+        else:
+            text_surface.fill((255,255,255))
         text_surface.blit(text, (2 - self.offset, (field_height - text_height) / 2))
         SCREEN.blit(text_surface, (grid.gridCordinat(self.x, self.y, blockSize)))
 
