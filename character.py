@@ -42,7 +42,7 @@ class character(field):
             case 1:
                 path = "Images/Character/warrior.png"
             case 2:
-                path = "Images/Character/warrior.png"
+                path = "Images/Character/ranger.png"
             
         #Bild für den Heiltrank wird geladen
         self.img = grid.importImage(path, blockSize)
