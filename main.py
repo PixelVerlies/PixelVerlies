@@ -42,9 +42,14 @@ wall = grid.importImage("Images/Dungeon/wall.png", blockSize)
 
 run = True
 
-rod, charac, door_list, all_rooms = createDungeon.create(data, blockSize, fild_leng, fild_high, 1,1)
-
+rod = None
+charac = None
+door_list = None
+all_rooms = None
+created = False
 counter = 90
+chr_id = 0
+level_id = 0
 
 # Initialisiere alle Screen-Daten
 login_data = login_screen.create_login_fields(ueberschrift, textKoerper)
@@ -105,7 +110,7 @@ while run:
         elif current_site == 3: # Main Menu Screen
             if menu_data is not None:
                 prev_selected_character_id = menu_data["selected_character"]
-                result_site = menu_screen.handle_menu_events(event, menu_data, current_site, current_player_id)
+                result_site, chr_id, level_id = menu_screen.handle_menu_events(event, menu_data, current_site, current_player_id)
                 next_site_state['site'] = result_site
                 if next_site_state['site'] == 7 and menu_data["selected_character"] != prev_selected_character_id:
                     character_data = character_screen.create_character_fields(ueberschrift, textKoerper, menu_data["selected_character"])
@@ -146,6 +151,7 @@ while run:
         for field in registration_data["fields"]:
             field.drawField(blockSize, SCREEN)
     elif current_site == 3:
+        created = False
         if menu_data is not None: # Sicherstellen, dass menu_data existiert
             for field in menu_data["fields"]:
                 field.drawField(blockSize, SCREEN)
@@ -159,6 +165,10 @@ while run:
         for field in anleitung_data["fields"]:
             field.drawField(blockSize, SCREEN)
     elif current_site == 6:
+        if created == False:
+            rod, charac, door_list, all_rooms = createDungeon.create(data, blockSize, fild_leng, fild_high, level_id, chr_id)
+            created = True
+            counter = 90
         if rod.end == 0:
             rod.roundRun(events, charac, door_list, all_rooms)
             map.drawGamefild(rod, charac, SCREEN, blockSize, textKoerper)
