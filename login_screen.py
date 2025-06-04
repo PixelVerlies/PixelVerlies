@@ -1,9 +1,7 @@
 import pygame
 import textFunctions
-import grid
 import sql
 import hashlib
-import sys
 
 def create_login_fields(ueberschrift, textKoerper):
     texfield_list = []
@@ -34,6 +32,9 @@ def create_login_fields(ueberschrift, textKoerper):
     # Register und Anmelde buttons
     texfield_list.append(textFunctions.toggleButton("Registrieren", 12, 13, textKoerper, 8, 1))
     texfield_list.append(textFunctions.toggleButton("Anmelden", 21, 13, textKoerper, 8, 1))
+
+    # Neuer "Beenden" Button
+    texfield_list.append(textFunctions.toggleButton("Beenden", 16, 15, textKoerper, 8, 1))
     
     # AUsgabe der eingabe und ausgabe
     return {
@@ -43,73 +44,93 @@ def create_login_fields(ueberschrift, textKoerper):
         "error_msg": error_msg
     }
 
-def handle_login_events(event, login_data, site):
-    texfield_list = login_data["fields"]
+def handle_login_events(event, login_data, current_site):
     name_input = login_data["name_input"]
     password_field = login_data["password_field"]
     error_msg = login_data["error_msg"]
     
+    # Textfeld-Eingabe-Events unabhängig von Mausklick behandeln
+    name_input.handle_event(event)
+    password_field.handle_event(event)
+
+    # Standard-Rückgabewert: Behalte den aktuellen Screen bei
+    # Dies ist der Fall, wenn kein relevanter Event (Klick auf Button) stattfindet
+    return_state = {'site': current_site, 'player_id': None}
 
     if event.type == pygame.MOUSEBUTTONDOWN:
         posx, posy = pygame.mouse.get_pos()
         
-        for field in texfield_list:
-            if isinstance(field, textFunctions.textInput):
-                if field.rec.collidepoint(posx, posy):
-                    field.active = True
-                else:
-                    field.active = False
-                    
-            elif isinstance(field, textFunctions.toggleButton) and field.rec.collidepoint(posx, posy):
+        # Logik zum Aktivieren/Deaktivieren der Textfelder
+        if name_input.rec.collidepoint(posx, posy):
+            name_input.active = True
+            password_field.active = False
+            error_msg.active = False # Fehlermeldung ausblenden bei Klick auf Feld
+        elif password_field.rec.collidepoint(posx, posy):
+            password_field.active = True
+            name_input.active = False
+            error_msg.active = False # Fehlermeldung ausblenden bei Klick auf Feld
+        else: # Klick außerhalb der Textfelder und Buttons
+            name_input.active = False
+            password_field.active = False
+
+        # Button-Handling
+        for field in login_data["fields"]:
+            if isinstance(field, textFunctions.toggleButton) and field.rec.collidepoint(posx, posy):
                 if field.text == "Passwort Anzeigen":
-                    # Password sichtbar button funktion
-                    for input_field in texfield_list:
-                        if isinstance(input_field, textFunctions.textInput) and input_field.is_password:
-                            input_field.show_password = not input_field.show_password
+                    password_field.show_password = not password_field.show_password
+                    error_msg.active = False # Fehlermeldung ausblenden, da keine Aktion, die Fehler verursacht
+                    # return_state bleibt current_site
                 elif field.text == "Registrieren":
-                    site = 2  # zu Registrieren springen
-                    error_msg.text = "---"  # dabei den error löschen
+                    error_msg.active = False # Fehlermeldung ausblenden beim Wechsel
+                    return_state['site'] = 2 # Signal für main.py: Wechsel zu Site 2 (Registrierung)
+                    return return_state # Gib den aktualisierten Zustand zurück
                 elif field.text == "Anmelden":
-                    # Überprüfen des Logins
-                    if not name_input.text.strip() and not password_field.real_text.strip():
-                        error_msg.text = "Bitte Name UND Passwort EINGEBEN"
-                    elif not name_input.text.strip() :
-                        error_msg.text = "Bitte Name EINGEBEN"
-                    elif not password_field.real_text.strip():
-                        error_msg.text = "Bitte Passwort EINGEBEN"
-                    #Passwort in Hash umwandeln und im Sql überpfrüfen.
-                    elif sql.LoginDB(name_input.text.strip(), hashlib.sha256(password_field.real_text.strip().encode()).hexdigest()):
-                        site = 3  # Login erfolgreich
-                        error_msg.text = "---"  # Error Löschen
-                        name_input.text = ""
-                        password_field.real_text = ""
-                        login_data["login_attempts"] = 0
+                    username = name_input.text.strip()
+                    password = password_field.real_text.strip()
+                    
+                    if not username and not password:
+                        error_msg.update_text("Bitte Name UND Passwort EINGEBEN")
+                        error_msg.active = True
+                        error_msg.set_color((255, 0, 0))
+                        # return_state bleibt current_site
+                    elif not username:
+                        error_msg.update_text("Bitte Name EINGEBEN")
+                        error_msg.active = True
+                        error_msg.set_color((255, 0, 0))
+                        # return_state bleibt current_site
+                    elif not password:
+                        error_msg.update_text("Bitte Passwort EINGEBEN")
+                        error_msg.active = True
+                        error_msg.set_color((255, 0, 0))
+                        # return_state bleibt current_site
                     else:
-                        login_data["login_attempts"] = login_data.get("login_attempts", 0) + 1 #fehlversuche zählen
-                        error_msg.text = f"Fehlversuch {login_data['login_attempts']}/3" #ausgabe zähler
-            
-                        if login_data["login_attempts"] >= 3: #bei mehr als 3 falschen versuchen, abbruch?!?! wait
-                            #timer = pygame.time.wait(6000)
-                            #error_msg.text = f"Warte bitte {timer}"
-                            pygame.quit()
-                            sys.exit()
+                        player_id = sql.LoginDB(username, hashlib.sha256(password.encode()).hexdigest())
                         
-    
-    if event.type == pygame.KEYDOWN:
-        for field in texfield_list:
-            if isinstance(field, textFunctions.textInput) and field.active:
-                if event.key == pygame.K_BACKSPACE: #backspace/löschen taste löscht im text immer ein Zeichen
-                    field.text = field.text[:-1]
-                    if field.is_password:
-                        field.real_text = field.real_text[:-1]
-                elif event.key == pygame.K_TAB:
-                    field.text = field.text + ""#beim tab nichts machen #nice to have ins nächste feld springen.
-                else: #umlaute/sinderzeichen ersetzen, für das font, und leerzeichen nicht ermöglichen
-                    char = event.unicode.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A").replace(" ", "")
-                    if field.is_password:
-                        field.real_text += char
-                        field.text += "*" if not field.show_password else char
-                    else:
-                        field.text += char
-    
-    return site
+                        if player_id is not None:
+                            error_msg.active = False
+                            name_input.text = ""
+                            password_field.real_text = ""
+                            password_field.text = ""
+                            name_input.active = False
+                            password_field.active = False
+                            login_data["login_attempts"] = 0 # Zähler zurücksetzen
+                            return {'site': 3, 'player_id': player_id} # WICHTIG: Direkt das neue Site- und ID-Objekt zurückgeben
+                        else:
+                            login_data["login_attempts"] = login_data.get("login_attempts", 0) + 1
+                            error_msg.update_text(f"Fehlversuch {login_data['login_attempts']}/3")
+                            error_msg.active = True
+                            error_msg.set_color((255, 0, 0))
+                        
+                            if login_data["login_attempts"] >= 3:
+                                print("DEBUG: 3 Fehlversuche. Beende Spiel.") # Debugging
+                                return "QUIT" # Signal zum Beenden des Spiels an main.py
+                            # return_state bleibt current_site bei Login-Fehler
+                    return return_state # Gib den aktualisierten Zustand zurück
+                
+                elif field.text == "Beenden": # Neuer Beenden-Button
+                    print("DEBUG: 'Beenden' geklickt.") # Debugging
+                    return "QUIT" # Signal zum Beenden des Spiels an main.py
+
+    # Wenn kein relevanter Event (Klick auf Button) stattfindet,
+    # wird der ursprüngliche return_state (aktuelle Site) zurückgegeben.
+    return return_state

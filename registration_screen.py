@@ -1,6 +1,5 @@
 import pygame
 import textFunctions
-import grid
 import sql
 import hashlib
 

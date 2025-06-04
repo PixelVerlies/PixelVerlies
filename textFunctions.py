@@ -1,5 +1,6 @@
 import pygame
 import grid
+
 class textField():
     def __init__(self, text, x, y, font, leng=0, high=0, rev=0):
         self.text = text.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A")
@@ -8,6 +9,7 @@ class textField():
         self.font = font
         self.leng = leng
         self.high = high
+        self.active = False # Hinzugefügt für das Error Message Feld
         self.rev = rev
         if self.rev == 1:
             self.color = (255, 255, 255) 
@@ -16,6 +18,9 @@ class textField():
 
 
     def drawField(self, blockSize, SCREEN):
+        if not self.active and self.text == "": # Zeichne nicht, wenn inaktiv und kein Text
+            return
+
         text = self.font.render(self.text, False, self.color)  # Verwende die Farbe
         
         text_x, text_y = text.get_size()
@@ -40,6 +45,12 @@ class textField():
         text_surface.blit(text, ((count_x - text_x) / 2, (count_y - text_y) / 2))
         SCREEN.blit(text_surface, (grid.gridCordinat(self.x, self.y, blockSize)))
         
+    def update_text(self, new_text): # NEU: Methode zum Aktualisieren des Textes
+        self.text = new_text.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A")
+
+    def set_color(self, new_color): # NEU: Methode zum Ändern der Textfarbe
+        self.color = new_color
+
 class textweiß():
     def __init__(self, text, x, y, font, leng=0, high=0):
         self.text = text.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A")
@@ -71,11 +82,8 @@ class textweiß():
         text_surface.fill((0,0,0))#schwarz hintergrund
         text_surface.blit(text, ((count_x - text_x) / 2, (count_y - text_y) / 2))
         SCREEN.blit(text_surface, (grid.gridCordinat(self.x, self.y, blockSize)))
-
-
         
-
-
+        
 class textInput():
     def __init__(self, x, y, font, leng, high):
         self.text = ""
@@ -114,6 +122,23 @@ class textInput():
         text_surface.fill((255,255,255))
         text_surface.blit(text, (2 - self.offset, (field_height - text_height) / 2))
         SCREEN.blit(text_surface, (grid.gridCordinat(self.x, self.y, blockSize)))
+
+    def handle_event(self, event):
+        if self.active and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                self.text = self.text[:-1]
+                if self.is_password:
+                    self.real_text = self.real_text[:-1]
+            elif event.key == pygame.K_RETURN: 
+                self.active = False 
+            else:
+                char = event.unicode.replace("ü", "u").replace("ö", "o").replace("ä", "a").replace("ß", "ss").replace("Ü", "U").replace("Ö", "O").replace("Ä", "A").replace(" ", "")
+                if char.isprintable(): 
+                    if self.is_password:
+                        self.real_text += char
+                        self.text += "*" if not self.show_password else char
+                    else:
+                        self.text += char
 
 class toggleButton():
     def __init__(self, text, x, y, font, leng, high):

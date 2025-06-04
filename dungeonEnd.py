@@ -2,7 +2,7 @@ import textFunctions
 import sql
 import random
 
-def dungeonEnd(rod, fild_leng, fild_high, SCREEN, blockSize, ueberschrift, counter, data, charac, run):
+def dungeonEnd(rod, fild_leng, fild_high, SCREEN, blockSize, ueberschrift, counter, data, charac, current_site):
     #Setzt die Kordinaten für die Nachricht
     x = int(fild_leng / 2 - 9)
     y = int(fild_high / 2 - 1)
@@ -33,9 +33,9 @@ def dungeonEnd(rod, fild_leng, fild_high, SCREEN, blockSize, ueberschrift, count
     #Zählt Anzeigedauer runter
     counter -= 1
     if counter == 0:
-        run = False
+        current_site = 3
     
-    return counter, run
+    return counter, current_site
 
 def looten(data, rod, charac):
     #Läd alle Items des Charakters

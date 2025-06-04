@@ -1,5 +1,167 @@
 from database import database
 
+# Globale Datenbankinstanz
+db = database()
+
+def LoginDB(username, password):
+    db.connection()
+    db.cur.execute(f"""SELECT SpielerID, Benutzername, Passwort
+                   FROM Spieler
+                   WHERE BINARY Benutzername like '{username}' AND BINARY Passwort like '{password}'""")
+    
+    result = db.cur.fetchone()
+    if result:
+        return result[0]  # Gibt die SpielerID zurück, wenn Login erfolgreich
+    else:
+        return None  # Gibt None zurück, wenn Login fehlschlägt
+
+def username(username):
+    db.connection()
+    db.cur.execute(f"""SELECT Benutzername
+                   FROM Spieler
+                   WHERE BINARY Benutzername like '{username}'""")
+    
+    result = db.cur.fetchone()
+    return result is not None
+
+
+def registrierDB(username, password):
+    db.connection()
+    db.cur.execute(f"""INSERT INTO `Spieler` (`Benutzername`, `Passwort`)
+                   VALUES ('{username}', '{password}')""")
+    
+    db.conn.commit()
+
+
+def CharakterMenuDB(spieler_id):
+    db.connection()
+    db.cur.execute(f"""
+        SELECT c.CharakterID, c.Name, k.KlassenName, c.StufenID
+        FROM Charakter c
+        JOIN Klassen k ON c.KlassenID = k.KlassenID
+        WHERE c.SpielerID = {spieler_id}
+    """)
+    return db.cur.fetchall()
+
+def KlassenMenuDB():
+    db.connection()
+    db.cur.execute(f"""
+        SELECT KlassenName, LPWuerfel, Bewegungsrate, KlassenID
+        FROM Klassen
+    """)
+    return db.cur.fetchall()
+
+def get_character_details(character_id):
+    db.connection()
+    db.cur.execute(f"""
+        SELECT
+            c.Name,
+            k.KlassenName,
+            c.LP,
+            c.StufenID,
+            k.Bewegungsrate,
+            w.Beschreibung AS AusgeruesteteWaffeBeschreibung,
+            wurf.Seiten AS WaffenSchadenWuerfel
+        FROM Charakter c
+        JOIN Klassen k ON c.KlassenID = k.KlassenID
+        LEFT JOIN CharakterWaffen cw ON c.CharakterID = cw.CharakterID AND cw.Ausgeruestet = 1
+        LEFT JOIN Waffen w ON cw.WaffenID = w.WaffenID
+        LEFT JOIN Wuerfel wurf ON w.WuerfelID = wurf.WuerfelID
+        WHERE c.CharakterID = {character_id}
+    """)
+    return db.cur.fetchone()
+
+def get_character_potions(character_id):
+    db.connection()
+    db.cur.execute(f"""
+        SELECT h.Beschreibung, ch.Anzahl
+        FROM CharakterHeiltraenke ch
+        JOIN Heiltraenke h ON ch.HeiltrankID = h.HeilID
+        WHERE ch.CharakterID = {character_id}
+    """)
+    return db.cur.fetchall()
+
+def get_character_weapons(character_id):
+    db.connection()
+    db.cur.execute(f"""
+        SELECT w.WaffenID, w.Beschreibung, wurf.Seiten AS Schaden, cw.Ausgeruestet
+        FROM CharakterWaffen cw
+        JOIN Waffen w ON cw.WaffenID = w.WaffenID
+        JOIN Wuerfel wurf ON w.WuerfelID = wurf.WuerfelID
+        WHERE cw.CharakterID = {character_id}
+    """)
+    return db.cur.fetchall()
+
+def create_character(name, klassen_id, spieler_id):
+    db.connection()
+    try:
+        db.cur.execute(f"SELECT LPWuerfel FROM Klassen WHERE KlassenID = {klassen_id}")
+        lp_wuerfel = db.cur.fetchone()[0]
+        
+        db.cur.execute(f"""
+            INSERT INTO Charakter (KlassenID, Name, SpielerID, LP, EP, StufenID)
+            VALUES ({klassen_id}, '{name}', {spieler_id}, {lp_wuerfel}, 0, 1)
+        """)
+        character_id = db.cur.lastrowid
+        
+        db.cur.execute(f"""
+            INSERT INTO CharakterWaffen (CharakterID, WaffenID, Ausgeruestet)
+            VALUES ({character_id}, 7, 1)
+        """)
+
+        db.cur.execute("SELECT HeilID FROM Heiltraenke")
+        heal_potion_ids = db.cur.fetchall()
+        for heal_id in heal_potion_ids:
+            db.cur.execute(f"""
+                INSERT INTO CharakterHeiltraenke (CharakterID, HeiltrankID, Anzahl)
+                VALUES ({character_id}, {heal_id[0]}, 1)
+            """)
+
+        db.conn.commit()
+        return True
+    except Exception as e:
+        print(f"Fehler beim Erstellen des Charakters: {e}")
+        db.conn.rollback()
+        return False
+
+def update_character_name(character_id, new_name):
+    db.connection()
+    db.cur.execute(f"""
+        UPDATE Charakter
+        SET Name = '{new_name}'
+        WHERE CharakterID = {character_id}
+    """)
+    db.conn.commit()
+
+def unequip_all_weapons(character_id):
+    db.connection()
+    db.cur.execute(f"""
+        UPDATE CharakterWaffen
+        SET Ausgeruestet = 0
+        WHERE CharakterID = {character_id}
+    """)
+    db.conn.commit()
+
+def equip_weapon(character_id, weapon_id):
+    db.connection()
+    db.cur.execute(f"""
+        UPDATE CharakterWaffen
+        SET Ausgeruestet = 1
+        WHERE CharakterID = {character_id} AND WaffenID = {weapon_id}
+    """)
+    db.conn.commit()
+
+def check_character_name_exists_for_player(name, spieler_id):
+    db.connection()
+    db.cur.execute(f"""
+        SELECT COUNT(*)
+        FROM Charakter
+        WHERE BINARY Name = '{name}' AND SpielerID = {spieler_id}
+    """)
+    result = db.cur.fetchone()[0]
+    return result > 0
+
+
 def loadEnemie(enemieID, data):
     data.cur.execute(f"""SELECT Gegner.Name, Gegner.LP, Gegner.GegnerID, Wuerfel.seiten
                         FROM Gegner JOIN Wuerfel ON Gegner.wuerfelID = Wuerfel.wuerfelID
