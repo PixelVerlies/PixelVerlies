@@ -64,7 +64,6 @@ character_data = {
     "char_name_input": None,
     "selected_character_id": None,
     "fertig_button": None,
-    "character_image_path": None,
     "weapon_table_headers": [],
     "weapon_table_data": [],
     "weapon_table_rects": []

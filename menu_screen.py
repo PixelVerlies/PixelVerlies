@@ -11,12 +11,16 @@ def create_menu_fields(ueberschrift, textKoerper):
     texfield_list.append(textFunctions.textField("HAUPMENÜ", 3, 2, ueberschrift, 11))
 
     # Menu buttons
-    texfield_list.append(textFunctions.toggleButton("Charakter", 3, 8, textKoerper, 8, 1))
-    texfield_list.append(textFunctions.toggleButton("Anleitung", 3, 10, textKoerper, 8, 1))
-    texfield_list.append(textFunctions.toggleButton("Start", 3, 12, textKoerper, 8, 1))
-    texfield_list.append(textFunctions.toggleButton("Abmelden", 3, 14, textKoerper, 8, 1))
-    texfield_list.append(textFunctions.toggleButton("Beenden", 3, 16, textKoerper, 8, 1))
-    texfield_list.append(textFunctions.toggleButton("Credits", 3, 18, textKoerper, 8, 1))
+    texfield_list.append(textFunctions.toggleButton("Anleitung", 3, 6, textKoerper, 8, 1))
+    create_new_char_button = textFunctions.toggleButton("Neuen Charakter", 3, 8, textKoerper, 8, 1)
+    texfield_list.append(create_new_char_button)
+    texfield_list.append(textFunctions.toggleButton("Charakter", 3, 10, textKoerper, 8, 1))
+    texfield_list.append(textFunctions.toggleButton("Level", 3, 12, textKoerper, 8, 1))
+    texfield_list.append(textFunctions.toggleButton("Spiel starten", 3, 14, textKoerper, 8, 1))
+    texfield_list.append(textFunctions.toggleButton("Abmelden", 3, 16, textKoerper, 8, 1))
+    texfield_list.append(textFunctions.toggleButton("Beenden", 3, 18, textKoerper, 8, 1))
+    texfield_list.append(textFunctions.toggleButton("Credits", 3, 20, textKoerper, 8, 1))
+    
     
     # Character table überschriften
     character_data_headers = [
@@ -26,13 +30,10 @@ def create_menu_fields(ueberschrift, textKoerper):
     Klasse_data_headers = [
         ["KlassenName","LP", "Bewegung" ],
     ]
-    
-    # Neuer Charakter Button - immer sichtbar
-    create_new_char_button = textFunctions.toggleButton("Neuen Charakter", 3, 6, textKoerper, 8, 1)
-    texfield_list.append(create_new_char_button)
 
     # Eingabefeld für neuen Charaktername (anfänglich unsichtbar)
     name_input_label = textFunctions.textField("Name eingeben:", 12, 6, textKoerper, 6)
+
     new_char_name_input = textFunctions.textInput(19, 6, textKoerper, 10, 1)
     
     # Button zum Speichern des neuen Charakters (anfänglich unsichtbar)
@@ -74,8 +75,8 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
 
         menu_data["table_rects"] = [] # Wichtig: Nur hier leeren für die Charaktertabelle
         
-        table_start_x = 12
-        table_start_y = 8
+        table_start_x = 14
+        table_start_y = 9
         
         col_widths = [10, 7, 4] # Spaltenbreiten für Name, Klasse, Stufe
         
@@ -130,8 +131,8 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
 
         menu_data["klasse_table_rects"] = [] # NEU: Separate Liste für Klassenauswahl-Rechtecke
         
-        table_klasse_x = 12
-        table_klasse_y = 8 # Startposition für Klassentabelle
+        table_klasse_x = 14
+        table_klasse_y = 9 # Startposition für Klassentabelle
         
         col_widths_klasse = [10, 4, 5] # Angepasste Spaltenbreiten für Klassen
         
@@ -146,7 +147,6 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
                 # Markiere ausgewählte Klasse
                 if db_data_display_klasse[row_idx-1][3] == menu_data["selected_klasse_id"]: # Vergleiche mit KlassenID
                     bg_color = (137,137,137) # Grauer Hintergrund für ausgewählte Klasse
-
             for col_idx, col_width in enumerate(col_widths_klasse):
                 x = table_klasse_x + sum(col_widths_klasse[:col_idx])
                 y = table_klasse_y + row_idx * 2
@@ -225,7 +225,7 @@ def handle_menu_events(event, menu_data, site, current_player_id):
                 # Weitere Menü-Buttons
                 elif field.text == "Anleitung": # Geändert von Dungeon
                     site = 5
-                elif field.text == "Start":
+                elif field.text == "Spiel starten":
                     char_id = 1
                     level_id = 1
                     site = 6
