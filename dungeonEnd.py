@@ -55,7 +55,7 @@ def looten(data, rod, charac):
         win = random.randint(0, len(lis)-1)
 
         #Speichert den Gewinn
-        #sql.saveWin(data, charac, lis[win])
+        sql.saveWin(data, charac, lis[win])
 
 def expirence(data, level, charac):
     #Läd aktuelle Daten vom Charakter
