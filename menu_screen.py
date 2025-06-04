@@ -110,8 +110,6 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
                             (sum(col_widths) * blockSize, 2 * blockSize)
                         )
                         menu_data["table_rects"].append((full_row_rect, db_data_display[row_idx-1][-1])) # Letztes Element ist die CharakterID
-    #else: # Entfernt, da die table_rects sowieso bei jedem Durchlauf geleert werden, wenn show_characters True ist
-    #    menu_data["table_rects"] = [] 
 
 
     # Zeichne die Eingabefelder für neuen Charakter, den Save Button und die Klassentabelle, wenn 'show_new_char_input' True ist
@@ -239,7 +237,7 @@ def handle_menu_events(event, menu_data, site, current_player_id):
                     sys.exit()
                 elif field.text == "Credits":
                     site = 4
-                return site
+                return site,0,0
         
         # Event-Handling für den "Speichern" Button des neuen Charakters
         if menu_data["show_new_char_input"] and menu_data["save_new_char_button"].rec.collidepoint(posx, posy):
@@ -279,7 +277,7 @@ def handle_menu_events(event, menu_data, site, current_player_id):
                 if rect.collidepoint(posx, posy): 
                     menu_data["selected_klasse_id"] = klasse_id # KlasseID speichern
                     menu_data["error_message_field"].active = False # Fehlermeldung ausblenden bei Klassenauswahl
-                    return site # Bleibe auf dem gleichen Bildschirm
+                    return site,0,0 # Bleibe auf dem gleichen Bildschirm
 
         # Check character table clicks (if visible) - original logic
         if menu_data["show_characters"]:
@@ -287,6 +285,6 @@ def handle_menu_events(event, menu_data, site, current_player_id):
                 if rect.collidepoint(posx, posy): 
                     menu_data["selected_character"] = char_id 
                     site = 7 
-                    return site 
+                    return site,0,0 
 
-    return site
+    return site,0,0
