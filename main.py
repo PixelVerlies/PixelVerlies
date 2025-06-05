@@ -57,7 +57,8 @@ registration_data = registration_screen.create_registration_fields(ueberschrift,
 # menu_data wird erst bei erfolgreichem Login erstellt, um die current_player_id zu nutzen
 menu_data = None 
 credits_data = credits_screen.create_credits_fields(ueberschrift, textKoerper)
-anleitung_data = anleitung_screen.create_anleitung_fields(ueberschrift, textKoerper)
+anleitung_data = anleitung_screen.create_anleitung_fields(ueberschrift, textKoerper, 1)
+text_site = 1
 
 character_data = {
     "fields": [],
@@ -125,7 +126,8 @@ while run:
             next_site_state['site'] = result_site
 
         elif current_site == 5: # Anleitung Screen
-            result_site = anleitung_screen.handle_credits_events(event, anleitung_data, current_site)
+            result_site, text_site = anleitung_screen.handle_anleitung_events(event, anleitung_data, current_site, text_site)
+            anleitung_data = anleitung_screen.create_anleitung_fields(ueberschrift, textKoerper, text_site)
             next_site_state['site'] = result_site
 
         elif current_site == 7: # Character Screen
