@@ -46,8 +46,8 @@ def CharakterMenuDB(spieler_id):
 def KlassenMenuDB():
     db.connection()
     db.cur.execute(f"""
-        SELECT KlassenName, LPWuerfel, Bewegungsrate, KlassenID
-        FROM Klassen
+        SELECT Klassen.KlassenName, Wuerfel.Seiten, Klassen.Bewegungsrate, Klassen.KlassenID
+        FROM Klassen JOIN Wuerfel ON Klassen.LPWuerfel = Wuerfel.WuerfelID
     """)
     return db.cur.fetchall()
 
@@ -95,7 +95,7 @@ def get_character_weapons(character_id):
 def create_character(name, klassen_id, spieler_id):
     db.connection()
     try:
-        db.cur.execute(f"SELECT LPWuerfel FROM Klassen WHERE KlassenID = {klassen_id}")
+        db.cur.execute(f"SELECT Wuerfel.Seiten FROM Klassen JOIN Wuerfel ON Klassen.LPWuerfel = Wuerfel.WuerfelID WHERE KlassenID = {klassen_id}")
         lp_wuerfel = db.cur.fetchone()[0]
         
         db.cur.execute(f"""
@@ -111,11 +111,13 @@ def create_character(name, klassen_id, spieler_id):
         #heiltränke am anfang auswahl.
         db.cur.execute("SELECT HeilID FROM Heiltraenke")
         heal_potion_ids = db.cur.fetchall()
+        counter = 1
         for heal_id in heal_potion_ids:
             db.cur.execute(f"""
                 INSERT INTO CharakterHeiltraenke (CharakterID, HeiltrankID, Anzahl)
-                VALUES ({character_id}, {heal_id[0]}, 1)
+                VALUES ({character_id}, {heal_id[0]}, {counter})
             """)
+            counter +=1
 
         db.conn.commit()
         return True
@@ -163,6 +165,7 @@ def check_character_name_exists_for_player(name, spieler_id):
 
 
 def loadEnemie(enemieID, data):
+    #Holt alle Daten für die Gegner
     data.cur.execute(f"""SELECT Gegner.Name, Gegner.LP, Gegner.GegnerID, Wuerfel.seiten
                         FROM Gegner JOIN Wuerfel ON Gegner.wuerfelID = Wuerfel.wuerfelID
                         WHERE GegnerID = {enemieID}""")
@@ -174,6 +177,7 @@ def loadEnemie(enemieID, data):
     return lis[0]
 
 def loadHealingPotion(data, charac):
+    #Holt alle Heiltränke des Charakters
     data.cur.execute(f"""SELECT Heiltraenke.Beschreibung, Heiltraenke.Heilung, CharakterHeiltraenke.Anzahl, Heiltraenke.HeilID
                         FROM Heiltraenke JOIN CharakterHeiltraenke ON Heiltraenke.HeilID = CharakterHeiltraenke.HeiltrankID
                         WHERE CharakterHeiltraenke.CharakterID = {charac.id}""")
@@ -185,6 +189,7 @@ def loadHealingPotion(data, charac):
     return lis
 
 def loadWinItems(data, level):
+    #Holt alle möglichen Waffen Gewinne
     data.cur.execute(f"""SELECT BeuteWaffen.WaffenID, BeuteWaffen.BeuteID
                         FROM Beute JOIN BeuteWaffen ON Beute.BeuteID = BeuteWaffen.BeuteID
                         WHERE Beute.StufenID = {level}""")
@@ -193,6 +198,7 @@ def loadWinItems(data, level):
     for i in data.cur:
         lis.append((i[0],1))
 
+    #Holt alle möglichen Rüstungs Gewinne
     data.cur.execute(f"""SELECT BeuteRuestungen.RuestungsID, BeuteRuestungen.BeuteID
                         FROM Beute JOIN BeuteRuestungen ON Beute.BeuteID = BeuteRuestungen.BeuteID
                         WHERE Beute.StufenID = {level}""")
@@ -203,6 +209,7 @@ def loadWinItems(data, level):
     return lis
 
 def loadItems(data, charac):
+    #Holt alle Waffen des Charakters
     data.cur.execute(f"""SELECT CharakterWaffen.WaffenID, CharakterWaffen.CharakterID
                         FROM CharakterWaffen
                         WHERE CharakterWaffen.CharakterID = {charac.id}""")
@@ -212,6 +219,7 @@ def loadItems(data, charac):
         it = (i[0],1)
         lis.append(it)
 
+    #Holt alle Rüstungen des Charakters
     data.cur.execute(f"""SELECT CharakterRuestungen.RuestungsID, CharakterRuestungen.CharakterID
                         FROM CharakterRuestungen
                         WHERE CharakterRuestungen.CharakterID = {charac.id}""")
@@ -220,12 +228,11 @@ def loadItems(data, charac):
         it = (i[0],2)
         lis.append(it)
 
-    #print(lis)
-
     return lis
 
 
 def saveWin(data, charac, winItem):
+    #Speichert den Gewinn des Charakters
     if winItem[1] == 1:
         data.cur.execute(f"""INSERT INTO CharakterWaffen (CharakterID, WaffenID, Ausgeruestet)
                          VALUES ('{charac.id}', '{winItem[0]}', '0')""")
@@ -237,6 +244,7 @@ def saveWin(data, charac, winItem):
 
 
 def loadWinExpirence(data, level, ep):
+    #Holt die Gewinn EP zu dem passenden Dungeon
     data.cur.execute(f"""SELECT Stufe.winEP, Stufe.LevelEP
                         FROM Stufe
                         WHERE Stufe.StufenID = {level}""")
@@ -245,6 +253,7 @@ def loadWinExpirence(data, level, ep):
     for i in data.cur:
         lis.append(i)
 
+    #Holt die EP Daten für das nächste Level
     data.cur.execute(f"""SELECT Stufe.winEP, Stufe.LevelEP
                         FROM Stufe
                         WHERE Stufe.StufenID = {ep[1]+1}""")
@@ -256,6 +265,7 @@ def loadWinExpirence(data, level, ep):
 
 
 def loadExpirence(data, charac):
+    #Holt die EP, die Stufe und die LP des Charakters
     data.cur.execute(f"""SELECT Charakter.EP, Charakter.StufenID, Charakter.LP, Wuerfel.Seiten
                         FROM (Charakter JOIN Klassen ON Charakter.KlassenID = Klassen.KlassenID) JOIN Wuerfel ON Klassen.LPWuerfel = Wuerfel.WuerfelID
                         WHERE Charakter.CharakterID = {charac.id}""")
@@ -267,6 +277,7 @@ def loadExpirence(data, charac):
     return(lis[0])
 
 def saveExpirence(data, charac, ep):
+    #Speichert die EP, die Stufe und die LP des Charakters
     data.cur.execute(f"""UPDATE Charakter 
                     SET Charakter.EP = {ep[0]}, Charakter.StufenID = {ep[1]}, Charakter.LP =  {ep[2]}
                     WHERE Charakter.CharakterID = {charac.id}""")
@@ -274,6 +285,7 @@ def saveExpirence(data, charac, ep):
     data.conn.commit()
 
 def saveRating(data, rod, charac):
+    #Speichert abgeschlossene Dungeon
     data.cur.execute(f"""INSERT INTO AbgeDungeon (StufenID, Runden, CharakterID)
                         VALUES ('{rod.level}', '{rod.roundNr}', '{charac.id}')""")
         
@@ -281,6 +293,7 @@ def saveRating(data, rod, charac):
 
 
 def loadCharacter(data, id):
+    #Holt die Daten des Charakters
     data.cur.execute(f"""SELECT Klassen.Bewegungsrate, Charakter.StufenID, Charakter.LP, Charakter.KlassenID
                         FROM Charakter JOIN Klassen ON Charakter.KlassenID = Klassen.KlassenID
                         WHERE Charakter.CharakterID = {id}""")
@@ -289,6 +302,7 @@ def loadCharacter(data, id):
     for i in data.cur:
         lis.append(i)
     
+    #Holt die ausgerüstete Waffe des Charakters
     data.cur.execute(f"""SELECT CharakterWaffen.WaffenID, Wuerfel.Seiten
                         FROM (CharakterWaffen JOIN Waffen ON CharakterWaffen.WaffenID = Waffen.WaffenID) JOIN Wuerfel ON Waffen.WuerfelID = Wuerfel.WuerfelID
                         WHERE CharakterWaffen.CharakterID = {id}
@@ -297,6 +311,7 @@ def loadCharacter(data, id):
     for i in data.cur:
         lis.append(i)
 
+    #Holt die ausgerüstete Rüstung des Charakters
     data.cur.execute(f"""SELECT CharakterRuestungen.RuestungsID, Ruestungen.Schutz
                         FROM CharakterRuestungen JOIN Ruestungen ON CharakterRuestungen.RuestungsID = Ruestungen.RuestungsID
                         WHERE CharakterRuestungen.CharakterID = {id}
@@ -313,6 +328,7 @@ def loadCharacter(data, id):
     return(lis)
 
 def loadClass(data, id):
+    #Holt die KlassenID des Charakters
     data.cur.execute(f"""SELECT Charakter.KlassenID
                         FROM Charakter
                         WHERE Charakter.CharakterID = {id}""")
