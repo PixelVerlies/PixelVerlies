@@ -43,6 +43,7 @@ class enemie(field):
         self.img = grid.importImage(path, blockSize)
 
     def heuristic(self, a, b):
+        #Manhattan-Distanz für Wegelänge in Gittern mit 4 Richtungen
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
     def pathFinder(self, fields, cols, rows, charac):
@@ -68,7 +69,7 @@ class enemie(field):
             else:
                 grid[i.y][i.x] = 1
         
-
+        #Reicht die Kordinaten an den Algorithmus weiter
         open_set = []
         heapq.heappush(open_set, (0 + self.heuristic(start, goal), 0, start))
         came_from = {}
@@ -78,6 +79,7 @@ class enemie(field):
         directions = [(-1,0),(1,0),(0,-1),(0,1)]
         
         while open_set:
+            #Nächsten Schritt herausfinden
             test, current_cost, current = heapq.heappop(open_set)
             
             #Gibt es einen Weg zum Ziel
@@ -102,10 +104,13 @@ class enemie(field):
                 else:
                     return None
             
+            #Überprüft jedes Nachbarfeld
             for dx, dy in directions:
+                #Prüft ob Nachbar ein Hinderniss ist
                 next_node = (current[0] + dx, current[1] + dy)
                 x, y = next_node
                 if 0 <= x < rows and 0 <= y < cols and grid[int(x)][int(y)] != 1:
+                    #Prüft wie viele Schritte der Pfad kostet
                     new_cost = cost_so_far[current] + 1
                     if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
                         cost_so_far[next_node] = new_cost
