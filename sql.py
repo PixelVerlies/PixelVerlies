@@ -165,15 +165,15 @@ def equip_weapon(character_id, weapon_id):
 
 def check_character_name_exists_for_player(name, spieler_id, exclude_character_id=None):
     db.connection()
+    query = ""
+    if exclude_character_id:
+        query += f" AND CharakterID != {exclude_character_id}"
     db.cur.execute(f"""
         SELECT COUNT(*)
         FROM Charakter
         WHERE BINARY Name = '{name}' AND SpielerID = {spieler_id}
-    """)
-    if exclude_character_id:
-        query += f" AND CharakterID != {exclude_character_id}"
+    """ + query)
     
-    db.cur.execute(query)
     result = db.cur.fetchone()[0]
     return result > 0
 
