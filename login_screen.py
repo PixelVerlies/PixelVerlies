@@ -9,16 +9,16 @@ def create_login_fields(ueberschrift, textKoerper):
     # Titel "ANMELDUNG"
     texfield_list.append(textFunctions.textField("ANMELDUNG", 14, 3, ueberschrift, 12))
     
-    # Name field
+    # Name field eingabe
     texfield_list.append(textFunctions.textField("Name", 12, 7, textKoerper, 5))
     name_input = textFunctions.textInput(19, 7, textKoerper, 10, 1)
     texfield_list.append(name_input)
     
-    # Passwort field
+    # Passwort field Passwort eingabe ist nicht sichtbar anfangs
     texfield_list.append(textFunctions.textField("Passwort", 12, 9, textKoerper, 5))
     password_field = textFunctions.textInput(19, 9, textKoerper, 10, 1)
     password_field.is_password = True
-    password_field.show_password = False
+    password_field.show_password = False 
     texfield_list.append(password_field)
     
     # Passwort anzeigen button
@@ -36,7 +36,6 @@ def create_login_fields(ueberschrift, textKoerper):
     # Neuer "Beenden" Button
     texfield_list.append(textFunctions.toggleButton("Beenden", 16, 15, textKoerper, 8, 1))
     
-    # AUsgabe der eingabe und ausgabe
     return {
         "fields": texfield_list,
         "name_input": name_input,
@@ -53,8 +52,7 @@ def handle_login_events(event, login_data, current_site):
     name_input.handle_event(event)
     password_field.handle_event(event)
 
-    # Standard-Rückgabewert: Behalte den aktuellen Screen bei
-    # Dies ist der Fall, wenn kein relevanter Event (Klick auf Button) stattfindet
+    # Standard-Rückgabewert: Behalte den aktuellen Screen bei wenn kein Klick auf Button stattfindet
     return_state = {'site': current_site, 'player_id': None}
 
     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -104,9 +102,9 @@ def handle_login_events(event, login_data, current_site):
                         error_msg.set_color((255, 0, 0))
                         # return_state bleibt current_site
                     else:
-                        player_id = sql.LoginDB(username, hashlib.sha256(password.encode()).hexdigest())
+                        player_id = sql.LoginDB(username, hashlib.sha256(password.encode()).hexdigest()) #Passowrt Hashen und in datenbank vergleichen
                         
-                        if player_id is not None:
+                        if player_id is not None: #Felder zurücksetzen
                             error_msg.active = False
                             name_input.text = ""
                             password_field.real_text = ""
@@ -117,15 +115,14 @@ def handle_login_events(event, login_data, current_site):
                             return {'site': 3, 'player_id': player_id} # WICHTIG: Direkt das neue Site- und ID-Objekt zurückgeben
                         else:
                             login_data["login_attempts"] = login_data.get("login_attempts", 0) + 1
-                            error_msg.update_text(f"Fehlversuch {login_data['login_attempts']}/3")
+                            error_msg.update_text(f"Fehlversuch {login_data['login_attempts']}/3") #Zähler für Fehlversuche beim Login
                             error_msg.active = True
                             error_msg.set_color((255, 0, 0))
                         
-                            if login_data["login_attempts"] >= 3:
+                            if login_data["login_attempts"] >= 3: # Bei Drei fehlversuchen Spiel schließen
                                 print("DEBUG: 3 Fehlversuche. Beende Spiel.") # Debugging
                                 return "QUIT" # Signal zum Beenden des Spiels an main.py
-                            # return_state bleibt current_site bei Login-Fehler
-                    return return_state # Gib den aktualisierten Zustand zurück
+                    return return_state # return_state bleibt current_site bei Login-Fehler
                 
                 elif field.text == "Beenden": # Neuer Beenden-Button
                     print("DEBUG: 'Beenden' geklickt.") # Debugging

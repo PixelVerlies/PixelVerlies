@@ -31,7 +31,7 @@ def create_registration_fields(ueberschrift, textKoerper):
     # Passwort Anzeigen button
     texfield_list.append(textFunctions.toggleButton("PASSWORT ANZEIGEN", 30, 9, textKoerper, 8, 1))
     
-    # Error message (initially hidden)
+    # Error message (hidden)
     error_msg = textFunctions.textField("---", 12, 13, textKoerper, 17)
     error_msg.color = (255, 0, 0)  # Red color for error
     texfield_list.append(error_msg)
@@ -98,7 +98,7 @@ def handle_registration_events(event, registration_data, site):
     if event.type == pygame.KEYDOWN:
         for field in texfield_list:
             if isinstance(field, textFunctions.textInput) and field.active:
-                if event.key == pygame.K_BACKSPACE:  #backspace/löschen taste löscht im text immer ein Zeichen
+                if event.key == pygame.K_BACKSPACE:  #backspace/löschen taste löscht im text immer nur ein Zeichen
                     field.text = field.text[:-1]
                     if field.is_password:
                         field.real_text = field.real_text[:-1]

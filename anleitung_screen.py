@@ -53,8 +53,8 @@ def create_anleitung_fields(ueberschrift, textKoerper, site):
     
 def handle_anleitung_events(event, anleitung_data, site, text_site):
     texfield_list = anleitung_data["fields"]
-
-    if event.type == pygame.MOUSEBUTTONDOWN:
+    
+    if event.type == pygame.MOUSEBUTTONDOWN: #Button Klick
         posx, posy = pygame.mouse.get_pos()
         
         for field in texfield_list:                    

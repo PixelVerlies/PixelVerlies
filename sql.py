@@ -3,11 +3,11 @@ from database import database
 # Globale Datenbankinstanz
 db = database()
 
-def LoginDB(username, password):
+def LoginDB(username, password): #Login Daten prüfen
     db.connection()
     db.cur.execute(f"""SELECT SpielerID, Benutzername, Passwort
                    FROM Spieler
-                   WHERE BINARY Benutzername like '{username}' AND BINARY Passwort like '{password}'""")
+                   WHERE BINARY Benutzername like '{username}' AND BINARY Passwort like '{password}'""")#Binary für groß/klein Schreibung
     
     result = db.cur.fetchone()
     if result:
@@ -15,7 +15,7 @@ def LoginDB(username, password):
     else:
         return None  # Gibt None zurück, wenn Login fehlschlägt
 
-def username(username):
+def username(username): #Holt gleichen Benutzername
     db.connection()
     db.cur.execute(f"""SELECT Benutzername
                    FROM Spieler
@@ -24,8 +24,7 @@ def username(username):
     result = db.cur.fetchone()
     return result is not None
 
-
-def registrierDB(username, password):
+def registrierDB(username, password): #Speichert den neuen Spieler
     db.connection()
     db.cur.execute(f"""INSERT INTO `Spieler` (`Benutzername`, `Passwort`)
                    VALUES ('{username}', '{password}')""")
@@ -33,7 +32,7 @@ def registrierDB(username, password):
     db.conn.commit()
 
 
-def CharakterMenuDB(spieler_id):
+def CharakterMenuDB(spieler_id): #Holt Daten von Charakter und der Klasse für den Spieler
     db.connection()
     db.cur.execute(f"""
         SELECT c.CharakterID, c.Name, k.KlassenName, c.StufenID
@@ -43,7 +42,7 @@ def CharakterMenuDB(spieler_id):
     """)
     return db.cur.fetchall()
 
-def KlassenMenuDB():
+def KlassenMenuDB(): #Holt Daten für die Klassen Auswhal
     db.connection()
     db.cur.execute(f"""
         SELECT Klassen.KlassenName, Wuerfel.Seiten, Klassen.Bewegungsrate, Klassen.KlassenID
@@ -51,7 +50,7 @@ def KlassenMenuDB():
     """)
     return db.cur.fetchall()
 
-def get_character_details(character_id):
+def get_character_details(character_id): #Holt einige Daten für den Character_Screen, Joint die Tabellen nach Notwenigkeit
     db.connection()
     db.cur.execute(f"""
         SELECT
@@ -75,7 +74,7 @@ def get_character_details(character_id):
     """)
     return db.cur.fetchone()
 
-def get_character_potions(character_id):
+def get_character_potions(character_id): #Holt Heiltränke die der Charakter hat
     db.connection()
     db.cur.execute(f"""
         SELECT h.Beschreibung, ch.Anzahl
@@ -85,7 +84,7 @@ def get_character_potions(character_id):
     """)
     return db.cur.fetchall()
 
-def get_character_weapons(character_id):
+def get_character_weapons(character_id): # Holt Waffen die der Charakter hat
     db.connection()
     db.cur.execute(f"""
         SELECT w.WaffenID, w.Beschreibung, wurf.Seiten AS Schaden, cw.Ausgeruestet
@@ -96,29 +95,29 @@ def get_character_weapons(character_id):
     """)
     return db.cur.fetchall()
 
-def create_character(name, klassen_id, spieler_id):
+def create_character(name, klassen_id, spieler_id): #Neuen Charakter anlegen
     db.connection()
-    try:
+    try: #die Daten holen für die LP
         db.cur.execute(f"SELECT Wuerfel.Seiten FROM Klassen JOIN Wuerfel ON Klassen.LPWuerfel = Wuerfel.WuerfelID WHERE KlassenID = {klassen_id}")
         lp_wuerfel = db.cur.fetchone()[0]
-        
+        #Speichert neuen Charakter, mit eingebenen daten, dazu 0 EP und Stufe 1
         db.cur.execute(f"""
             INSERT INTO Charakter (KlassenID, Name, SpielerID, LP, EP, StufenID)
             VALUES ({klassen_id}, '{name}', {spieler_id}, {lp_wuerfel}, 0, 1)
         """)
         character_id = db.cur.lastrowid
-        
+        #Speichert zu dem Charakter die Standard Waffe Faust mit dazu
         db.cur.execute(f"""
             INSERT INTO CharakterWaffen (CharakterID, WaffenID, Ausgeruestet)
             VALUES ({character_id}, 7, 1)
         """)
-
+        #Speichert zu dem Charakter die Standard Rüstung mit dazu
         db.cur.execute(f"""
             INSERT INTO CharakterRuestungen (CharakterID, RuestungsID, Ausgeruestet)
             VALUES ({character_id}, 6, 1)
         """)
 
-        #heiltränke am anfang auswahl.
+        #Heiltränke am anfang zur auswahl.(3 Kleine, zwei mittlere und ei Großen)
         db.cur.execute("SELECT HeilID FROM Heiltraenke")
         heal_potion_ids = db.cur.fetchall()
         counter = 1
@@ -136,7 +135,7 @@ def create_character(name, klassen_id, spieler_id):
         db.conn.rollback()
         return False
 
-def update_character_name(character_id, new_name):
+def update_character_name(character_id, new_name): #Ändert den Namen des Charakters
     db.connection()
     db.cur.execute(f"""
         UPDATE Charakter
@@ -145,7 +144,7 @@ def update_character_name(character_id, new_name):
     """)
     db.conn.commit()
 
-def unequip_all_weapons(character_id):
+def unequip_all_weapons(character_id): #Ändert, dass keine Waffe ausgerüstet ist
     db.connection()
     db.cur.execute(f"""
         UPDATE CharakterWaffen
@@ -154,7 +153,7 @@ def unequip_all_weapons(character_id):
     """)
     db.conn.commit()
 
-def equip_weapon(character_id, weapon_id):
+def equip_weapon(character_id, weapon_id): #Ändert, dass die ausgewählte Waffe ausgerüstet ist
     db.connection()
     db.cur.execute(f"""
         UPDATE CharakterWaffen
@@ -163,7 +162,7 @@ def equip_weapon(character_id, weapon_id):
     """)
     db.conn.commit()
 
-def check_character_name_exists_for_player(name, spieler_id, exclude_character_id=None):
+def check_character_name_exists_for_player(name, spieler_id, exclude_character_id=None): # Zählt alle Charaktere, des Spielers
     db.connection()
     query = ""
     if exclude_character_id:
@@ -353,7 +352,7 @@ def loadClass(data, id):
 
     return(lis[0])
 
-def LevelMenuDB():
+def LevelMenuDB(): # Holt die Stufen für DIe Level Auswahl Tabelle
     db.connection()
     db.cur.execute(f"""
         SELECT 'Schwierigkeits-Level',`StufenID`
@@ -361,7 +360,7 @@ def LevelMenuDB():
     """)
     return db.cur.fetchall()
 
-def count_characters_for_player(player_id):
+def count_characters_for_player(player_id): # zählt charaktere die der spieler hat, für die maximale Anzahl
     db.connection()
     db.cur.execute(F"""SELECT COUNT(*) 
                    FROM Charakter 
@@ -369,7 +368,7 @@ def count_characters_for_player(player_id):
     count = db.cur.fetchone()[0]
     return count
 
-def get_character_rustung(character_id):
+def get_character_rustung(character_id): # Holt Rüstung Tabelle für Character_screen
     db.connection()
     db.cur.execute(f"""
         SELECT cr.RuestungsID, r.Beschreibung, r.Schutz , cr.Ausgeruestet
@@ -379,7 +378,7 @@ def get_character_rustung(character_id):
     """)
     return db.cur.fetchall()
 
-def unequip_all_rustung(character_id):
+def unequip_all_rustung(character_id): #Änderung alle Rüstungen auf 0, also nicht ausgerüstet setzen
     db.connection()
     db.cur.execute(f"""
         UPDATE CharakterRuestungen
@@ -388,7 +387,7 @@ def unequip_all_rustung(character_id):
     """)
     db.conn.commit()
 
-def equip_rustung(character_id, rustung_id):
+def equip_rustung(character_id, rustung_id): # Ausgewählte Rustung auf Ausgerüstet setzten
     db.connection()
     db.cur.execute(f"""
         UPDATE CharakterRuestungen

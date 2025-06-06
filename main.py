@@ -14,12 +14,12 @@ import createDungeon
 
 
 data = database()
-data.connection()
+data.connection() #Datenbank Verbindung herstellen, falls keine besteht bricht es gleich ab
 
 pygame.init()
 clock = pygame.time.Clock()
 
-WIDTH = 1000
+WIDTH = 1000 #Größe des Fentsters
 HEIGHT = 600
 
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -28,20 +28,20 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 pygame.font.init()
-ueberschrift = pygame.font.Font("Arcade-Classic-Font/bytebounce.medium.TTF", 45)
-textKoerper = pygame.font.Font("Arcade-Classic-Font/bytebounce.medium.TTF", 25)
+ueberschrift = pygame.font.Font("Arcade-Classic-Font/bytebounce.medium.TTF", 45) #Textfelder für überschriften
+textKoerper = pygame.font.Font("Arcade-Classic-Font/bytebounce.medium.TTF", 25) #Normaler textfeleder font laden und größe
 
-blockSize = 25
+blockSize = 25 #Fenster in Blöcke einteilen
 fild_leng = int(WIDTH / blockSize)
 fild_high = int(HEIGHT / blockSize)
 
 # 1 = Login, 2 = Registration, 3 = Main Menu, 4 = Credits, 5 = Anleitung, 6 = Start, 7 = Character
 current_site = 1 # Startet immer auf dem Login-Screen
 
-wall = grid.importImage("Images/Dungeon/wall.png", blockSize)
+wall = grid.importImage("Images/Dungeon/wall.png", blockSize) #Import wall, für Rand um alle fenster
 
 run = True
-
+#Spiel starten Attribute
 rod = None
 charac = None
 door_list = None
@@ -77,8 +77,7 @@ while run:
             break 
         
         if current_site == 1:  # Login-Screen
-            # handle_login_events gibt jetzt ein Dictionary mit 'site' und ggf. 'player_id' zurück
-            # oder ein Signal zum Beenden
+            # handle_login_events gibt ein Dictionary mit 'site' und ggf. 'player_id' zurück oder ein Signal zum Beenden
             action_result = login_screen.handle_login_events(event, login_data, current_site)
             
             if action_result == "QUIT": # Signal zum Beenden des Spiels
@@ -93,7 +92,7 @@ while run:
                     menu_data = menu_screen.create_menu_fields(ueberschrift, textKoerper)
                 elif action_result.get('site') == 2: # Wechsel zur Registrierung
                     next_site_state['site'] = 2
-                # Ansonsten (wenn action_result.get('site') == 1), bleibt next_site_state['site'] 1, was korrekt ist.
+                # Ansonsten (wenn action_result.get('site') == 1), bleibt next_site_state['site'] 1.
             
         elif current_site == 2:  # Registration-Screen
             result_site = registration_screen.handle_registration_events(event, registration_data, current_site)
@@ -105,12 +104,12 @@ while run:
                 result_site, chr_id, level_id = menu_screen.handle_menu_events(event, menu_data, current_site, current_player_id, current_site, chr_id, level_id)
                 next_site_state['site'] = result_site
                 
-                # Immer character_data neu initialisieren, wenn wir zum Character Screen wechseln
+                # Immer character_data neu initialisieren, wenn zum Character Screen wechseln
                 if next_site_state['site'] == 7:
                     if menu_data["selected_character"] is not None:
                         character_data = character_screen.create_character_fields(ueberschrift, textKoerper, menu_data["selected_character"])
             else:
-                # Dies sollte nicht passieren, wenn der Flow korrekt ist, aber als Fallback
+                # Dies sollte nicht passieren, aber als Fallback
                 print("DEBUG: Fehler: menu_data ist None auf Site 3. Rückkehr zum Login.")
                 next_site_state['site'] = 1 # Zurück zum Login
 
@@ -158,7 +157,7 @@ while run:
     elif current_site == 5:
         for field in anleitung_data["fields"]:
             field.drawField(blockSize, SCREEN)
-    elif current_site == 6:
+    elif current_site == 6: #Spiel start, alle Daten holen
         if created == False:
             rod, charac, door_list, all_rooms = createDungeon.create(data, blockSize, fild_leng, fild_high, level_id, chr_id)
             created = True
@@ -171,7 +170,7 @@ while run:
 
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(60) 
 
 pygame.quit()
 sys.exit()

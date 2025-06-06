@@ -26,16 +26,14 @@ def create_menu_fields(ueberschrift, textKoerper):
     character_data_headers = [
         ["NAME", "KLASSE", "STUFE"],
     ]
-
+    #Klassen Table Überschriften
     Klasse_data_headers = [
         ["KlassenName","LP", "Bewegung" ],
     ]
 
     # Eingabefeld für neuen Charaktername (anfänglich unsichtbar)
     name_input_label = textFunctions.textField("Name eingeben:", 12, 6, textKoerper, 6)
-
     new_char_name_input = textFunctions.textInput(19, 6, textKoerper, 10, 1)
-    
     # Button zum Speichern des neuen Charakters (anfänglich unsichtbar)
     save_new_char_button = textFunctions.toggleButton("Speichern", 32, 6, textKoerper, 6, 1) # Position angepasst
     
@@ -52,18 +50,18 @@ def create_menu_fields(ueberschrift, textKoerper):
         "show_klasse_table": False, # Zeigt die Charakterliste an/aus
         "show_level_table": False, # Zeigt die Levelliste an/aus
         "table_rects": [], # Für Charakterauswahl
-        "klasse_table_rects": [], # NEU: Für Klassenauswahl
-        "level_table_rects": [], # NEU: Für Klassenauswahl
+        "klasse_table_rects": [], # Für Klassenauswahl
+        "level_table_rects": [], # Für Klassenauswahl
         "selected_character": None,
         "last_clicked_char": None,  # Für Doppelklick-Erkennung
         "last_click_time": 0,       # Zeitpunkt des letzten Klicks
-        "selected_klasse_id": None, # NEU: Für die ausgewählte Klasse
-        "selected_level_id": 1,  # ÄNDERUNG: Standardmäßig Level 1 ausgewählt
-        "selected_level_id": None, # NEU: Für die ausgewählte Klasse
+        "selected_klasse_id": None, # Für die ausgewählte Klasse
+        "selected_level_id": 1,  # Standardmäßig Level 1 ausgewählt
+        "selected_level_id": None, #  Für die ausgewählte Klasse
         "create_new_char_button": create_new_char_button, 
         "name_input_label": name_input_label,
         "new_char_name_input": new_char_name_input,
-        "save_new_char_button": save_new_char_button, # Neuer Button
+        "save_new_char_button": save_new_char_button, # Neuer Charakter Speichern Button
         "error_message_field": error_message_field,
     }
 
@@ -80,9 +78,9 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
         
         table_font = pygame.font.Font("Arcade-Classic-Font/bytebounce.medium.TTF", 30) 
 
-        menu_data["table_rects"] = [] # Wichtig: Nur hier leeren für die Charaktertabelle
+        menu_data["table_rects"] = [] #Leeren für die Charaktertabelle
         
-        table_start_x = 14
+        table_start_x = 14 #Startposition
         table_start_y = 9
         
         col_widths = [10, 7, 4] # Spaltenbreiten für Name, Klasse, Stufe
@@ -95,10 +93,10 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
             else: # Datenzeilen
                 text_color = (255, 255, 255)
                 char_id = db_data_display[row_idx-1][3]
-                # Markiere ausgewählten Charakter
+                # Markiere ausgewählten Charakter in Grau
                 bg_color = (137, 137, 137) if char_id == menu_data["selected_character"] else (0, 0, 0)
 
-            for col_idx, col_width in enumerate(col_widths):
+            for col_idx, col_width in enumerate(col_widths): #Tabelle aussehen
                 x = table_start_x + sum(col_widths[:col_idx])
                 y = table_start_y + row_idx * 2
                 
@@ -106,9 +104,6 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
                     grid.gridCordinat(x, y, blockSize),
                     (col_width * blockSize, 2 * blockSize)
                 )
-                
-                #text_color = (0, 0, 0) if row_idx == 0 else (255, 255, 255)
-                #bg_color = (255, 255, 255) if row_idx == 0 else (0, 0, 0)
 
                 display_text_content = str(row_data[col_idx])
                 text_surface = table_font.render(display_text_content, False, text_color)
@@ -127,12 +122,7 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
                             grid.gridCordinat(table_start_x, y, blockSize),
                             (sum(col_widths) * blockSize, 2 * blockSize)
                         )
-                #if row_idx >= 1:
-                   # char_id = db_data_display[row_idx-1][3]
-                    #menu_data["table_rects"].append((full_row_rect, char_id))
-                        #menu_data["table_rects"].append((full_row_rect, db_data_display[row_idx-1][-1])) # Letztes Element ist die CharakterID
                         menu_data["table_rects"].append((full_row_rect, db_data_display[row_idx-1][3])) # Letztes Element ist die CharakterID
-
 
 
     # Zeichne die Eingabefelder für neuen Charakter, den Save Button und die Klassentabelle, wenn 'show_new_char_input' True ist
@@ -159,7 +149,6 @@ def draw_character_table(menu_data, blockSize, SCREEN, current_player_id, textKo
         col_widths_klasse = [10, 4, 5] # Angepasste Spaltenbreiten für Klassen
         
         for row_idx, row_data in enumerate(full_data_to_display_klasse):
-            x_offset = 0 # Um den Text der Klasse zu verschieben, falls benötigt
             if row_idx == 0: # Überschriften
                 text_color = (0, 0, 0)
                 bg_color = (255, 255, 255)
@@ -289,7 +278,6 @@ def handle_menu_events(event, menu_data, site, current_player_id, current_site, 
                     menu_data["new_char_name_input"].active = False # Textfeld deaktivieren
                     menu_data["selected_klasse_id"] = None # Auswahl zurücksetzen
                     menu_data["show_level_table"] = False  #Level-Tabelle ausblenden
-                    #menu_data["selected_character"] = None
 
                 # Behandlung für den "Neuen Charakter" Button
                 elif field.text == "Neuen Charakter":
@@ -309,7 +297,7 @@ def handle_menu_events(event, menu_data, site, current_player_id, current_site, 
                     menu_data["new_char_name_input"].real_text = "" # Textfeld leeren
                     menu_data["new_char_name_input"].text = "" # Textfeld leeren
                     menu_data["show_level_table"] = False  #Level-Tabelle ausblenden
-                    menu_data["selected_klasse_id"] = None # NEU: Auswahl zurücksetzen
+                    menu_data["selected_klasse_id"] = None # Auswahl zurücksetzen
                     if menu_data["show_new_char_input"]:
                         menu_data["new_char_name_input"].active = True # Textfeld aktivieren
                     else:
@@ -326,10 +314,10 @@ def handle_menu_events(event, menu_data, site, current_player_id, current_site, 
 
 
                 # Weitere Menü-Buttons
-                elif field.text == "Anleitung": # Geändert von Dungeon
+                elif field.text == "Anleitung": 
                     site = 5
                 elif field.text == "Spiel starten":
-                    if menu_data["selected_character"] is None:
+                    if menu_data["selected_character"] is None: #Muss Charakter ausgewählt werden mit dem man spielen will
                         menu_data["error_message_field"].update_text("Bitte wähle Charakter aus.")
                         menu_data["error_message_field"].active = True
                         menu_data["error_message_field"].set_color((255, 0, 0))
