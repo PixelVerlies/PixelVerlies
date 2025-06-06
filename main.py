@@ -57,17 +57,10 @@ registration_data = registration_screen.create_registration_fields(ueberschrift,
 # menu_data wird erst bei erfolgreichem Login erstellt, um die current_player_id zu nutzen
 menu_data = None 
 credits_data = credits_screen.create_credits_fields(ueberschrift, textKoerper)
-anleitung_data = anleitung_screen.create_anleitung_fields(ueberschrift, textKoerper)
+anleitung_data = anleitung_screen.create_anleitung_fields(ueberschrift, textKoerper, 1)
+text_site = 1
 
-character_data = {
-    "fields": [],
-    "char_name_input": None,
-    "selected_character_id": None,
-    "fertig_button": None,
-    "weapon_table_headers": [],
-    "weapon_table_data": [],
-    "weapon_table_rects": []
-}
+character_data = None
 
 current_player_id = None # Initialisiere mit None, da noch kein Spieler eingeloggt ist
 
@@ -109,12 +102,13 @@ while run:
         elif current_site == 3: # Main Menu Screen
             if menu_data is not None:
                 prev_selected_character_id = menu_data["selected_character"]
-                result_site, chr_id, level_id = menu_screen.handle_menu_events(event, menu_data, current_site, current_player_id)
+                result_site, chr_id, level_id = menu_screen.handle_menu_events(event, menu_data, current_site, current_player_id, current_site, chr_id, level_id)
                 next_site_state['site'] = result_site
-                if next_site_state['site'] == 7 and menu_data["selected_character"] != prev_selected_character_id:
-                    character_data = character_screen.create_character_fields(ueberschrift, textKoerper, menu_data["selected_character"])
-                elif next_site_state['site'] == 3 and prev_selected_character_id is not None:
-                    menu_data["selected_character"] = None
+                
+                # Immer character_data neu initialisieren, wenn wir zum Character Screen wechseln
+                if next_site_state['site'] == 7:
+                    if menu_data["selected_character"] is not None:
+                        character_data = character_screen.create_character_fields(ueberschrift, textKoerper, menu_data["selected_character"])
             else:
                 # Dies sollte nicht passieren, wenn der Flow korrekt ist, aber als Fallback
                 print("DEBUG: Fehler: menu_data ist None auf Site 3. Rückkehr zum Login.")
@@ -125,16 +119,17 @@ while run:
             next_site_state['site'] = result_site
 
         elif current_site == 5: # Anleitung Screen
-            result_site = anleitung_screen.handle_credits_events(event, anleitung_data, current_site)
+            result_site, text_site = anleitung_screen.handle_anleitung_events(event, anleitung_data, current_site, text_site)
+            anleitung_data = anleitung_screen.create_anleitung_fields(ueberschrift, textKoerper, text_site)
             next_site_state['site'] = result_site
 
         elif current_site == 7: # Character Screen
-            result_site = character_screen.handle_character_events(event, character_data, current_site)
+            result_site = character_screen.handle_character_events(event, character_data, current_site, current_player_id)
             next_site_state['site'] = result_site
             if next_site_state['site'] == 3:
                 # Menüdaten neu laden, wenn vom Charakterbildschirm zurück ins Menü
                 menu_data = menu_screen.create_menu_fields(ueberschrift, textKoerper)
-    
+                menu_data["selected_character"] = character_data["selected_character_id"]  # Auswahl beibehalten
 
     current_site = next_site_state['site']
     current_player_id = next_site_state['player_id'] # Stelle sicher, dass player_id auch aktualisiert wird
