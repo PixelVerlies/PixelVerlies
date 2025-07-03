@@ -1,0 +1,4 @@
+-Erst aufbau gemacht.
+-SQL Verbindung gemacht.
+-ein select dazu 
+- ohne hash erstmal
