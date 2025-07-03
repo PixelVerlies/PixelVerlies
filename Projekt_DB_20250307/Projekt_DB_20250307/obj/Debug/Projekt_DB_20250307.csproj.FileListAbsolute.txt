@@ -1,0 +1,17 @@
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\Projekt_DB_20250307.exe.config
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\Projekt_DB_20250307.exe
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\Projekt_DB_20250307.pdb
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_DB_20250307.csproj.AssemblyReference.cache
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_DB_20250307.Form1.resources
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_DB_20250307.Properties.Resources.resources
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_DB_20250307.csproj.GenerateResource.cache
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_DB_20250307.csproj.CoreCompileInputs.cache
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_DB_20250307.exe
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_DB_20250307.pdb
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\MySql.Data.dll
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\System.Memory.dll
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\System.Buffers.dll
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\bin\Debug\MySql.Data.xml
+C:\Users\daumj\Documents\Schule\Programmieren\C#\Projekt_DB_20250307\Projekt_DB_20250307\obj\Debug\Projekt_.57165549.Up2Date
