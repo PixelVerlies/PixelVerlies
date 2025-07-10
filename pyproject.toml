@@ -1,0 +1,10 @@
+[project]
+name = "pixelverlies"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "mariadb>=1.1.12",
+    "pygame>=2.6.1",
+]
